@@ -63,15 +63,6 @@ class HomelistItemWidget extends StatelessWidget {
                             ],
                           ),
                         ),
-                        CustomIconButton(
-                          height: 40.adaptSize,
-                          width: 40.adaptSize,
-                          padding: EdgeInsets.all(8.h),
-                          decoration: IconButtonStyleHelper.outlineBlack,
-                          child: CustomImageView(
-                            imagePath: homelistItemModelObj.smallFAB,
-                          ),
-                        ),
                       ],
                     ),
                     Container(

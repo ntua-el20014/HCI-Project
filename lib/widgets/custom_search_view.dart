@@ -106,6 +106,7 @@ class CustomSearchView extends StatelessWidget {
             Container(
               margin: EdgeInsets.all(16.h),
               child: CustomImageView(
+                color: Colors.black,
                 imagePath: ImageConstant.imgMegaphone,
                 height: 24.adaptSize,
                 width: 24.adaptSize,
@@ -119,6 +120,7 @@ class CustomSearchView extends StatelessWidget {
             Container(
               margin: EdgeInsets.fromLTRB(30.h, 16.v, 16.h, 16.v),
               child: CustomImageView(
+                color: Colors.black,
                 imagePath: ImageConstant.imgSearch,
                 height: 24.adaptSize,
                 width: 24.adaptSize,

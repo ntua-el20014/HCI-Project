@@ -8,11 +8,14 @@ class AppbarLeadingImage extends StatelessWidget {
     this.imagePath,
     this.margin,
     this.onTap,
+    this.color,
   }) : super(
           key: key,
         );
 
   String? imagePath;
+
+  Color? color;
 
   EdgeInsetsGeometry? margin;
 
@@ -22,11 +25,14 @@ class AppbarLeadingImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        onTap!.call();
+        NavigatorService.pushNamed(
+          AppRoutes.sideMenuScreen,
+        );
       },
       child: Padding(
         padding: margin ?? EdgeInsets.zero,
         child: CustomImageView(
+          color: color,
           imagePath: imagePath,
           height: 24.adaptSize,
           width: 24.adaptSize,

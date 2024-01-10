@@ -18,7 +18,6 @@ class HomeListBloc extends Bloc<HomeListEvent, HomeListState> {
           date: ImageConstant.imgThumbnail,
           overlineText: "dd / mm / yyyy",
           headlineText: "Memory Title",
-          smallFAB: ImageConstant.imgSmallFab,
           supportingText:
               "Supporting line text lorem ipsum dolor sit amet, consectetur."),
       HomelistItemModel(date: ImageConstant.imgThumbnail56x56),

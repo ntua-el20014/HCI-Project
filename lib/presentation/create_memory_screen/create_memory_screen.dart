@@ -65,6 +65,7 @@ class CreateMemoryScreen extends StatelessWidget {
     return CustomAppBar(
       leadingWidth: 40.h,
       leading: AppbarLeadingImage(
+        color: Colors.black,
         imagePath: ImageConstant.imgMegaphone,
         margin: EdgeInsets.only(
           left: 16.h,
@@ -77,12 +78,36 @@ class CreateMemoryScreen extends StatelessWidget {
         text: "lbl_new_memory".tr,
       ),
       actions: [
-        AppbarTrailingImage(
-          imagePath: ImageConstant.imgNotification,
+        PopupMenuButton<int>(
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 1,
+              child: Text("Option 1"),
+            ),
+            PopupMenuItem(
+              value: 2,
+              child: Text("Option 2"),
+            ),
+          ],
+          icon: Container(
           margin: EdgeInsets.symmetric(
             horizontal: 16.h,
             vertical: 12.v,
           ),
+            child: Image.asset(
+              ImageConstant.imgNotification,
+              height: 24.adaptSize,
+              width: 24.adaptSize,
+            ),
+          ),
+          onSelected: (value) {
+            // Handle your menu choice here
+            if (value == 1) {
+              // Do something when Option 1 is selected
+            } else if (value == 2) {
+              // Do something when Option 2 is selected
+            }
+          },
         ),
       ],
       styleType: Style.bgFill,

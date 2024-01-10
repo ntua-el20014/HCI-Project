@@ -8,11 +8,14 @@ class AppbarTrailingImage extends StatelessWidget {
     this.imagePath,
     this.margin,
     this.onTap,
+    this.color,
   }) : super(
           key: key,
         );
 
   String? imagePath;
+
+  Color? color;
 
   EdgeInsetsGeometry? margin;
 
@@ -27,6 +30,7 @@ class AppbarTrailingImage extends StatelessWidget {
       child: Padding(
         padding: margin ?? EdgeInsets.zero,
         child: CustomImageView(
+          color: color,
           imagePath: imagePath,
           height: 24.adaptSize,
           width: 24.adaptSize,

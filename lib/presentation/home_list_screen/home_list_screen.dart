@@ -186,7 +186,16 @@ class HomeListScreen extends StatelessWidget {
         width: 56,
         backgroundColor: appTheme.deepPurple5001,
         child: CustomImageView(
-            imagePath: ImageConstant.imgPlus, height: 28.0.v, width: 28.0.h));
+          imagePath: ImageConstant.imgPlus,
+          height: 28.0.v,
+          width: 28.0.h,
+          color: Colors.black),
+      onTap: () {
+        NavigatorService.pushNamed(
+          AppRoutes.createMemoryScreen,
+        );
+      },
+    );
   }
 
   /// Navigates to the memoryScreen when the action is triggered.

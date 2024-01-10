@@ -112,6 +112,7 @@ class MemoryScreen extends StatelessWidget {
     return CustomAppBar(
         leadingWidth: 40.h,
         leading: AppbarLeadingImage(
+            color: Colors.black,
             imagePath: ImageConstant.imgMegaphone,
             margin: EdgeInsets.only(left: 16.h, top: 12.v, bottom: 12.v)),
         centerTitle: true,
@@ -119,6 +120,7 @@ class MemoryScreen extends StatelessWidget {
         actions: [
           AppbarTrailingImage(
               imagePath: ImageConstant.imgNotification,
+              color: Colors.black,
               margin: EdgeInsets.symmetric(horizontal: 14.h, vertical: 12.v))
         ],
         styleType: Style.bgShadow);
