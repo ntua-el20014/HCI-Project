@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_leading_image.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_subtitle.dart';
-import 'package:anamnesis/widgets/app_bar/appbar_trailing_image.dart';
+//import 'package:anamnesis/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:anamnesis/widgets/app_bar/custom_app_bar.dart';
 import 'package:anamnesis/widgets/custom_drop_down.dart';
 import 'package:anamnesis/widgets/custom_elevated_button.dart';
 import 'package:anamnesis/widgets/custom_floating_text_field.dart';
 import 'package:anamnesis/widgets/custom_icon_button.dart';
+import '../side_menu_screen/side_menu_screen.dart';
 
 class CreateMemoryScreen extends StatelessWidget {
   const CreateMemoryScreen({Key? key})
@@ -33,29 +34,32 @@ class CreateMemoryScreen extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: _buildAppBar(context),
+        //drawer: SideMenuScreen(),
         body: Container(
           width: double.maxFinite,
           padding: EdgeInsets.symmetric(
             horizontal: 10.h,
             vertical: 7.v,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitle1(context),
-              SizedBox(height: 8.v),
-              _buildInputDatePicker(context),
-              SizedBox(height: 17.v),
-              _buildLocation(context),
-              SizedBox(height: 9.v),
-              _buildAddPeople(context),
-              SizedBox(height: 29.v),
-              _buildSelectTags(context),
-              SizedBox(height: 5.v),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTitle1(context),
+                SizedBox(height: 8.v),
+                _buildInputDatePicker(context),
+                SizedBox(height: 17.v),
+                _buildLocation(context),
+                SizedBox(height: 9.v),
+                _buildAddPeople(context),
+                SizedBox(height: 29.v),
+                _buildSelectTags(context),
+                SizedBox(height: 5.v),
+                _buildPhotos(context),
+              ],
+            ),
           ),
         ),
-        bottomNavigationBar: _buildPhotos(context),
       ),
     );
   }
@@ -78,36 +82,49 @@ class CreateMemoryScreen extends StatelessWidget {
         text: "lbl_new_memory".tr,
       ),
       actions: [
-        PopupMenuButton<int>(
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 1,
-              child: Text("Option 1"),
+        PopupMenuButton<String>(
+          icon: Icon(Icons.more_vert),
+          onSelected: (String result) {
+            // Handle menu item selection
+            print('Selected: $result');
+          },
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem<String>(
+              value: 'discard',
+              child: ListTile(
+                leading: CustomImageView(
+                  color: Colors.red,
+                  imagePath: ImageConstant.imgEdit,
+                  height: 24.adaptSize,
+                  width: 24.adaptSize,
+                ),
+                onTap: () {
+                  NavigatorService.pushNamed(
+                    AppRoutes.homeListScreen,
+                  );
+                },
+                title: Text(
+                  'Discard Draft',
+                  style: CustomTextStyles.titleSmallRed500,
+                ),
+              ),
             ),
-            PopupMenuItem(
-              value: 2,
-              child: Text("Option 2"),
+            PopupMenuItem<String>(
+              value: 'save',
+              child: ListTile(
+                leading: Icon(Icons.save, color: appTheme.deepPurple500),
+                onTap: () {
+                  NavigatorService.pushNamed(
+                    AppRoutes.homeListScreen,
+                  );
+                },
+                title: Text(
+                  'Save Draft',
+                  style: CustomTextStyles.titleSmallDeeppurple500,
+                ),
+              ),
             ),
           ],
-          icon: Container(
-          margin: EdgeInsets.symmetric(
-            horizontal: 16.h,
-            vertical: 12.v,
-          ),
-            child: Image.asset(
-              ImageConstant.imgNotification,
-              height: 24.adaptSize,
-              width: 24.adaptSize,
-            ),
-          ),
-          onSelected: (value) {
-            // Handle your menu choice here
-            if (value == 1) {
-              // Do something when Option 1 is selected
-            } else if (value == 2) {
-              // Do something when Option 2 is selected
-            }
-          },
         ),
       ],
       styleType: Style.bgFill,

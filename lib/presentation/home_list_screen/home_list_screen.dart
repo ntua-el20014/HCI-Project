@@ -24,14 +24,27 @@ class HomeListScreen extends StatelessWidget {
     return SafeArea(
         child: Scaffold(
             resizeToAvoidBottomInset: false,
-            body: SizedBox(
+        body: Stack(
+          children: [
+            SizedBox(
                 width: double.maxFinite,
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
                   _buildSearchPanel(context),
                   SizedBox(height: 3.v),
                   _buildHomeList(context)
-                ])),
-            floatingActionButton: _buildFloatingActionButton(context)));
+                ],
+              ),
+            ),
+            Positioned(
+              right: 10,
+              top: 150,
+              child: _buildFloatingMapButton(context),
+            ),
+          ],
+        ),
+        floatingActionButton: _buildFloatingActionButton(context),
+      ),
+    );
   }
 
   /// Section Widget
@@ -204,4 +217,27 @@ class HomeListScreen extends StatelessWidget {
       AppRoutes.memoryScreen,
     );
   }
+
+  onTapFabMap(BuildContext context) {
+    NavigatorService.pushNamed(
+      AppRoutes.homeMapScreen,
+    );
+  }
+
+  Widget _buildFloatingMapButton(BuildContext context) {
+    return FloatingActionButton(
+      mini: true,
+      onPressed: () {},
+      backgroundColor: appTheme.deepPurple5001,
+      child: CustomImageView(
+          imagePath: ImageConstant.imgSmallFab,
+          height: 20,
+          width: 20,
+          color: appTheme.deepPurple500,
+          onTap: () {
+            onTapFabMap(context);
+          }),
+    );
+  }
+  
 }

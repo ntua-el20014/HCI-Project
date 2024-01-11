@@ -77,36 +77,22 @@ class EditMemoryScreen extends StatelessWidget {
         text: "lbl_edit_memory".tr,
       ),
       actions: [
-        PopupMenuButton<int>(
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 1,
-              child: Text("Option 1"),
+        PopupMenuButton<String>(
+          icon: Icon(Icons.more_vert),
+          onSelected: (String result) {
+            // Handle menu item selection
+            print('Selected: $result');
+          },
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem<String>(
+              value: 'sort_asc',
+              child: Text('Sort Ascending'),
             ),
-            PopupMenuItem(
-              value: 2,
-              child: Text("Option 2"),
+            PopupMenuItem<String>(
+              value: 'sort_desc',
+              child: Text('Sort Descending'),
             ),
           ],
-          icon: Container(
-          margin: EdgeInsets.symmetric(
-            horizontal: 16.h,
-            vertical: 12.v,
-          ),
-            child: Image.asset(
-              ImageConstant.imgNotification,
-              height: 24.adaptSize,
-              width: 24.adaptSize,
-            ),
-          ),
-          onSelected: (value) {
-            // Handle your menu choice here
-            if (value == 1) {
-              // Do something when Option 1 is selected
-            } else if (value == 2) {
-              // Do something when Option 2 is selected
-            }
-          },
         ),
       ],
       styleType: Style.bgFill,
