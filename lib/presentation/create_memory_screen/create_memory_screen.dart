@@ -10,7 +10,7 @@ import 'package:anamnesis/widgets/custom_drop_down.dart';
 import 'package:anamnesis/widgets/custom_elevated_button.dart';
 import 'package:anamnesis/widgets/custom_floating_text_field.dart';
 import 'package:anamnesis/widgets/custom_icon_button.dart';
-import '../side_menu_screen/side_menu_screen.dart';
+//import '../side_menu_screen/side_menu_screen.dart';
 
 class CreateMemoryScreen extends StatelessWidget {
   const CreateMemoryScreen({Key? key})
@@ -184,17 +184,17 @@ class CreateMemoryScreen extends StatelessWidget {
 
   /// Section Widget
   Widget _buildDate(BuildContext context) {
-    return BlocSelector<CreateMemoryBloc, CreateMemoryState,
-        TextEditingController?>(
-      selector: (state) => state.dateController,
-      builder: (context, dateController) {
-        return CustomFloatingTextField(
-          controller: dateController,
-          labelText: "lbl_enter_dates".tr,
-          labelStyle: CustomTextStyles.titleLarge20,
-          hintText: "lbl_enter_dates".tr,
-          hintStyle: CustomTextStyles.titleLarge20,
-          suffix: Container(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "lbl_enter_dates".tr,
+          style: CustomTextStyles.titleLarge20,
+        ),
+        SizedBox(height: 8.v),
+        Row(
+          children: [
+            Container(
             margin: EdgeInsets.symmetric(horizontal: 24.h),
             child: CustomImageView(
               imagePath: ImageConstant.imgIconsToday24px,
@@ -202,12 +202,13 @@ class CreateMemoryScreen extends StatelessWidget {
               width: 24.adaptSize,
             ),
           ),
-          suffixConstraints: BoxConstraints(
-            maxHeight: 72.v,
+            Text(
+              "Enter Dates", // Replace with your static text
+              style: CustomTextStyles.titleLarge20,
           ),
-          contentPadding: EdgeInsets.fromLTRB(24.h, 27.v, 24.h, 20.v),
-        );
-      },
+          ],
+        ),
+      ],
     );
   }
 
@@ -491,8 +492,8 @@ class CreateMemoryScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      ListView(
+                        //crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
                             height: 24.v,

@@ -41,6 +41,7 @@ class CustomFloatingButton extends StatelessWidget {
 
   Widget get fabWidget => Container(
         child: FloatingActionButton(
+          heroTag: "new",
           backgroundColor: backgroundColor,
           onPressed: onTap,
           child: Container(

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_leading_image.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_subtitle.dart';
-import 'package:anamnesis/widgets/app_bar/appbar_trailing_image.dart';
+//import 'package:anamnesis/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:anamnesis/widgets/app_bar/custom_app_bar.dart';
 import 'package:anamnesis/widgets/custom_drop_down.dart';
 import 'package:anamnesis/widgets/custom_elevated_button.dart';
@@ -85,12 +85,34 @@ class EditMemoryScreen extends StatelessWidget {
           },
           itemBuilder: (BuildContext context) => [
             PopupMenuItem<String>(
-              value: 'sort_asc',
-              child: Text('Sort Ascending'),
+              value: 'discard_changes',
+              child: ListTile(
+                leading: Icon(Icons.cancel, color: appTheme.red500),
+                onTap: () {
+                  NavigatorService.pushNamed(
+                    AppRoutes.memoryScreen,
+                  );
+                },
+                title: Text(
+                  'Discard Changes',
+                  style: CustomTextStyles.titleSmallRed500,
+                ),
+              ),
             ),
             PopupMenuItem<String>(
-              value: 'sort_desc',
-              child: Text('Sort Descending'),
+              value: 'save_memory',
+              child: ListTile(
+                leading: Icon(Icons.save, color: appTheme.deepPurple500),
+                onTap: () {
+                  NavigatorService.pushNamed(
+                    AppRoutes.memoryScreen,
+                  );
+                },
+                title: Text(
+                  'Save',
+                  style: CustomTextStyles.titleSmallDeeppurple500,
+                ),
+              ),
             ),
           ],
         ),
@@ -106,6 +128,7 @@ class EditMemoryScreen extends StatelessWidget {
       selector: (state) => state.titleController,
       builder: (context, titleController) {
         return CustomFloatingTextField(
+          autofocus: false,
           controller: titleController,
           labelText: "lbl_title".tr,
           labelStyle: CustomTextStyles.titleLarge20_1,
@@ -186,6 +209,7 @@ class EditMemoryScreen extends StatelessWidget {
       selector: (state) => state.startDateController,
       builder: (context, startDateController) {
         return CustomFloatingTextField(
+          autofocus: false,
           width: 137.h,
           controller: startDateController,
           labelText: "lbl_date".tr,
@@ -210,6 +234,7 @@ class EditMemoryScreen extends StatelessWidget {
         selector: (state) => state.endDateController,
         builder: (context, endDateController) {
           return CustomFloatingTextField(
+            autofocus: false,
             width: 137.h,
             controller: endDateController,
             labelText: "lbl_end_date".tr,
@@ -264,6 +289,7 @@ class EditMemoryScreen extends StatelessWidget {
             selector: (state) => state.locationController,
             builder: (context, locationController) {
               return CustomFloatingTextField(
+                autofocus: false,
                 controller: locationController,
                 labelText: "lbl_location".tr,
                 labelStyle: CustomTextStyles.titleLarge20_1,

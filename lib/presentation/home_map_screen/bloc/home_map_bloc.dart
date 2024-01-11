@@ -15,10 +15,8 @@ class HomeMapBloc extends Bloc<HomeMapEvent, HomeMapState> {
     HomeMapInitialEvent event,
     Emitter<HomeMapState> emit,
   ) async {
-    Future.delayed(const Duration(milliseconds: 3000), () {
-      NavigatorService.popAndPushNamed(
-        AppRoutes.homeListScreen,
-      );
-    });
-  }
+    NavigatorService.pushNamed(
+      AppRoutes.homeListScreen,
+    );
+}
 }

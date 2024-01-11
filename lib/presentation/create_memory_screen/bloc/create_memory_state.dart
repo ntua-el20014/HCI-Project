@@ -6,7 +6,6 @@ part of 'create_memory_bloc.dart';
 class CreateMemoryState extends Equatable {
   CreateMemoryState({
     this.titleController,
-    this.dateController,
     this.dateController1,
     this.dateController2,
     this.locationController,
@@ -16,8 +15,6 @@ class CreateMemoryState extends Equatable {
   });
 
   TextEditingController? titleController;
-
-  TextEditingController? dateController;
 
   TextEditingController? dateController1;
 
@@ -34,7 +31,6 @@ class CreateMemoryState extends Equatable {
   @override
   List<Object?> get props => [
         titleController,
-        dateController,
         dateController1,
         dateController2,
         locationController,
@@ -44,7 +40,6 @@ class CreateMemoryState extends Equatable {
       ];
   CreateMemoryState copyWith({
     TextEditingController? titleController,
-    TextEditingController? dateController,
     TextEditingController? dateController1,
     TextEditingController? dateController2,
     TextEditingController? locationController,
@@ -54,7 +49,6 @@ class CreateMemoryState extends Equatable {
   }) {
     return CreateMemoryState(
       titleController: titleController ?? this.titleController,
-      dateController: dateController ?? this.dateController,
       dateController1: dateController1 ?? this.dateController1,
       dateController2: dateController2 ?? this.dateController2,
       locationController: locationController ?? this.locationController,

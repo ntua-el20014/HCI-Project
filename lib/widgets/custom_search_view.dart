@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
-
+import 'package:anamnesis/presentation/side_menu_screen/side_menu_screen.dart';
 class CustomSearchView extends StatelessWidget {
   CustomSearchView({
     Key? key,
@@ -71,6 +71,7 @@ class CustomSearchView extends StatelessWidget {
 
   final Function(String)? onChanged;
 
+
   @override
   Widget build(BuildContext context) {
     return alignment != null
@@ -92,20 +93,33 @@ class CustomSearchView extends StatelessWidget {
           style: textStyle ?? CustomTextStyles.bodyLargeGray800_1,
           keyboardType: textInputType,
           maxLines: maxLines ?? 1,
-          decoration: decoration,
+          textInputAction: TextInputAction.none,
+          decoration: decoration(context),
           validator: validator,
           onChanged: (String value) {
             onChanged!.call(value);
           },
         ),
       );
-  InputDecoration get decoration => InputDecoration(
+  InputDecoration decoration(BuildContext context) => InputDecoration(
         hintText: hintText ?? "",
         hintStyle: hintStyle ?? CustomTextStyles.bodyLargeGray800_1,
         prefixIcon: prefix ??
             Container(
               margin: EdgeInsets.all(16.h),
               child: CustomImageView(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        insetPadding: EdgeInsets.zero,
+                        child: SideMenuScreen(),
+                      );
+                    },
+                  );
+                },
                 color: Colors.black,
                 imagePath: ImageConstant.imgMegaphone,
                 height: 24.adaptSize,
