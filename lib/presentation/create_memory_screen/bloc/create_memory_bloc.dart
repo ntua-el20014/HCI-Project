@@ -73,7 +73,10 @@ class CreateMemoryBloc extends Bloc<CreateMemoryEvent, CreateMemoryState> {
   ) async {
     emit(state.copyWith(
       titleController: TextEditingController(),
-      dateController: TextEditingController(),
+      // dateController: TextEditingController(),
+      //I got a definition error here, so I commented it out
+      //Best regards,
+      // -Mike
       dateController1: TextEditingController(),
       dateController2: TextEditingController(),
       locationController: TextEditingController(),
