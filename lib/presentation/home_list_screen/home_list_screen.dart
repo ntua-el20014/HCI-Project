@@ -1,4 +1,5 @@
 import '../home_list_screen/widgets/homelist_item_widget.dart';
+import 'widgets/permission_request.dart';
 import 'bloc/home_list_bloc.dart';
 import 'models/home_list_model.dart';
 import 'models/homelist_item_model.dart';
@@ -9,7 +10,6 @@ import 'package:anamnesis/widgets/custom_search_view.dart';
 //import 'package:anamnesis/widgets/custom_text_form_field.dart';
 import 'models/label_item_model.dart';
 import 'widgets/label_widget.dart';
-
 
 final List<LabelItemModel> labels = [
   LabelItemModel(
@@ -25,6 +25,7 @@ final List<LabelItemModel> labels = [
       iconPath: ImageConstant.imgContrast,
       value: 'lbl_people'),
 ];
+
 class HomeListScreen extends StatelessWidget {
   const HomeListScreen({Key? key}) : super(key: key);
 
@@ -37,31 +38,33 @@ class HomeListScreen extends StatelessWidget {
   }
 
   @override
-Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: double.maxFinite,
-              child: _buildSearchPanel(context),
-            ),
-            Expanded(
-              child: Stack(
-                children: [
-                  _buildHomeList(context),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: _buildFloatingMapButton(context),
-                  ),
-                ],
+  Widget build(BuildContext context) {
+    return PermissionRequest(
+      child: SafeArea(
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: double.maxFinite,
+                child: _buildSearchPanel(context),
               ),
-            ),
-          ],
+              Expanded(
+                child: Stack(
+                  children: [
+                    _buildHomeList(context),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: _buildFloatingMapButton(context),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          floatingActionButton: _buildFloatingActionButton(context),
         ),
-        floatingActionButton: _buildFloatingActionButton(context),
       ),
     );
   }
@@ -84,7 +87,7 @@ Widget build(BuildContext context) {
                         hintText: "lbl_find_a_memory".tr);
                   }),
               SizedBox(
-                  width: double.maxFinite,
+                width: double.maxFinite,
                 child: _buildLabelCarousel(context, labels),
               ),
             ]));
@@ -92,7 +95,7 @@ Widget build(BuildContext context) {
 
   /// Section Widget
   /// Section Widget
-Widget _buildHomeList(BuildContext context) {
+  Widget _buildHomeList(BuildContext context) {
     return BlocSelector<HomeListBloc, HomeListState, HomeListModel?>(
       selector: (state) => state.homeListModelObj,
       builder: (context, homeListModelObj) {
@@ -117,16 +120,13 @@ Widget _buildHomeList(BuildContext context) {
     );
   }
 
-
-
-
   /// Section Widget
   Widget _buildFloatingActionButton(BuildContext context) {
     return CustomFloatingButton(
-        height: 56,
-        width: 56,
-        backgroundColor: appTheme.deepPurple5001,
-        child: CustomImageView(
+      height: 56,
+      width: 56,
+      backgroundColor: appTheme.deepPurple5001,
+      child: CustomImageView(
           imagePath: ImageConstant.imgPlus,
           height: 28.0.v,
           width: 28.0.h,
@@ -147,8 +147,7 @@ Widget _buildHomeList(BuildContext context) {
   }
 
   onTapFabMap(BuildContext context) {
-    NavigatorService.pushNamed(
-    AppRoutes.homeMapScreen);
+    NavigatorService.pushNamed(AppRoutes.homeMapScreen);
   }
 
   Widget _buildFloatingMapButton(BuildContext context) {
@@ -160,14 +159,13 @@ Widget _buildHomeList(BuildContext context) {
       },
       backgroundColor: appTheme.deepPurple5001,
       child: CustomImageView(
-          imagePath: ImageConstant.imgSmallFab,
-          height: 20,
-          width: 20,
+        imagePath: ImageConstant.imgSmallFab,
+        height: 20,
+        width: 20,
         color: appTheme.deepPurple500,
       ),
     );
   }
-  
 }
 
 Widget _buildLabelCarousel(BuildContext context, List<LabelItemModel> labels) {

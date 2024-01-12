@@ -17,24 +17,30 @@ class HomeMapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeMapBloc, HomeMapState>(builder: (context, state) {
-      return SafeArea(
-          child: Scaffold(
-              body: SizedBox(
-                  height: SizeUtils.height,
-                  width: double.maxFinite,
-                  child: Stack(alignment: Alignment.center, children: [
-                    Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                            decoration: AppDecoration.fillBlue,
-                            child: CustomImageView(
-                                imagePath: ImageConstant.imgEarth,
-                                height: 800.v,
-                                width: 360.h))),
-                    _buildHomeMap(context)
-                  ]))));
-    });
+    return Scaffold(
+        body: SafeArea(
+      child: Center(
+        child: Text("The map will appear here."),
+      ),
+    ));
+    // return BlocBuilder<HomeMapBloc, HomeMapState>(builder: (context, state) {
+    //   return SafeArea(
+    //       child: Scaffold(
+    //           body: SizedBox(
+    //               height: SizeUtils.height,
+    //               width: double.maxFinite,
+    //               child: Stack(alignment: Alignment.center, children: [
+    //                 Align(
+    //                     alignment: Alignment.center,
+    //                     child: Container(
+    //                         decoration: AppDecoration.fillBlue,
+    //                         child: CustomImageView(
+    //                             imagePath: ImageConstant.imgEarth,
+    //                             height: 800.v,
+    //                             width: 360.h))),
+    //                 _buildHomeMap(context)
+    //               ]))));
+    // });
   }
 
   /// Section Widget
