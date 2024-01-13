@@ -41,7 +41,7 @@ class HomeMapScreen extends StatelessWidget {
       child: Scaffold(
           body: Stack(
             children: [
-              Map(),
+              MapWidget(),
               Column(
                 children: [
                   _buildSearchPanel(context),

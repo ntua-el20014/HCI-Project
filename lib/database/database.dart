@@ -93,7 +93,7 @@ class DatabaseHelper {
     // Insert into 'memory' table
     await db.insert('memory', {
       'title': 'Memory 1',
-      'thumbnail': 'path/to/thumbnail1',
+      'thumbnail': 'assets/images/img_thumbnail.png',
       'start_date': DateTime.now().toString(),
       'end_date': DateTime.now().toString(),
       'location': '51.5074,0.1278',
@@ -102,7 +102,7 @@ class DatabaseHelper {
     });
     await db.insert('memory', {
       'title': 'Memory 2',
-      'thumbnail': 'path/to/thumbnail2',
+      'thumbnail': 'assets/images/img_thumbnail_56x56.png',
       'start_date': DateTime.now().toString(),
       'end_date': DateTime.now().toString(),
       'location': '41.5074,1.1278',
@@ -289,6 +289,21 @@ class DatabaseHelper {
     return await db.query('person');
   }
 
+  Future<List<Map<String, dynamic>>> getMemories() async {
+    // Returnes all memories and their basic attributes
+    final db = await this.db;
+    final List<Map<String, dynamic>> maps = await db.query('memory');
+
+    print("converting map to datatypeMap");
+    List<Map<String, dynamic>> memories = [];
+    for (int i = 0; i < maps.length; i++) {
+      Map<String, dynamic> memory = Memory.fromMap(maps[i]).toDatatypeMap();
+      memories.add(memory);
+    }
+    print('returning ${memories[0]['location'].runtimeType}');
+    return memories;
+  }
+
   Future<Map<String, dynamic>> getMemoryInfo(int id) async {
     print("Getting memory info");
     final db = await this.db;
@@ -356,7 +371,6 @@ class DatabaseHelper {
     );
     memory['people'] = personMaps.map((map) => map['person_id']).toList();
 
-    print("Got all memory info: $memory");
     return memory;
   }
 
