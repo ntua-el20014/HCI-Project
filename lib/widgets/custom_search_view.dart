@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
 import 'package:anamnesis/presentation/side_menu_screen/side_menu_screen.dart';
+
 class CustomSearchView extends StatelessWidget {
   CustomSearchView({
     Key? key,
@@ -25,6 +26,7 @@ class CustomSearchView extends StatelessWidget {
     this.filled = true,
     this.validator,
     this.onChanged,
+    this.hasShadow = false,
   }) : super(
           key: key,
         );
@@ -71,6 +73,7 @@ class CustomSearchView extends StatelessWidget {
 
   final Function(String)? onChanged;
 
+  final bool hasShadow;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +87,7 @@ class CustomSearchView extends StatelessWidget {
 
   Widget searchViewWidget(BuildContext context) => SizedBox(
         width: width ?? double.maxFinite,
+<<<<<<< HEAD
         child: TextFormField(
           scrollPadding:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -99,6 +103,38 @@ class CustomSearchView extends StatelessWidget {
           onChanged: (String value) {
             onChanged!.call(value);
           },
+=======
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: hasShadow
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 2,
+                      offset: Offset(0, 3), // Changes position of shadow
+                    )
+                  ]
+                : [],
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: TextFormField(
+            scrollPadding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            controller: controller,
+            focusNode: focusNode ?? FocusNode(),
+            autofocus: autofocus!,
+            style: textStyle ?? CustomTextStyles.bodyLargeGray800_1,
+            keyboardType: textInputType,
+            maxLines: maxLines ?? 1,
+            textInputAction: TextInputAction.none,
+            decoration: decoration(context),
+            validator: validator,
+            onChanged: (String value) {
+              onChanged!.call(value);
+            },
+          ),
+>>>>>>> 18cc0c07b0a4d73ccd014ce3e4178285cff7c92c
         ),
       );
   InputDecoration decoration(BuildContext context) => InputDecoration(
