@@ -6,21 +6,18 @@ import 'package:geolocator/geolocator.dart';
 import 'package:anamnesis/core/app_export.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_leading_image.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_subtitle.dart';
-//import 'package:anamnesis/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:anamnesis/widgets/app_bar/custom_app_bar.dart';
 import 'package:anamnesis/widgets/custom_elevated_button.dart';
 import 'package:anamnesis/widgets/custom_floating_text_field.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'models/people_list.dart';
 import '../home_list_screen/models/label_item_model.dart';
 import '../create_memory_screen/models/image_carousel.dart';
-//import '../home_list_screen/widgets/label_widget.dart';
-//import '../side_menu_screen/side_menu_screen.dart';
+import 'package:path/path.dart' as path;
 
-// Example usage
+// Example
 final List<PeopleItemModel> peopleList = [
   PeopleItemModel(name: "Alice"),
   PeopleItemModel(name: "Bob"),
@@ -54,11 +51,8 @@ final List<LabelItemModel> tags = [
     value: 'lbl_people',
   ),
 ];
-class CreateMemoryScreen extends StatelessWidget {
-  const CreateMemoryScreen({Key? key})
-      : super(
-          key: key,
-        );
+class CreateMemoryScreen extends StatefulWidget {
+  const CreateMemoryScreen({Key? key}) : super(key: key);
 
   static Widget builder(BuildContext context) {
     return BlocProvider<CreateMemoryBloc>(
@@ -70,6 +64,11 @@ class CreateMemoryScreen extends StatelessWidget {
     );
   }
 
+  @override
+  _CreateMemoryScreenState createState() => _CreateMemoryScreenState();
+}
+
+class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
   @override
 Widget build(BuildContext context) {
     return SafeArea(
@@ -93,6 +92,10 @@ Widget build(BuildContext context) {
             _buildSelectTags(context),
               SizedBox(height: 30.v),
             _buildPhotos(context),
+              SizedBox(height: 30.v),
+              _buildJournals(context),
+              SizedBox(height: 30.v),
+              _buildRecordings(context),
               ],
             ),
         ),
@@ -434,12 +437,22 @@ Widget build(BuildContext context) {
 
   /// Section Widget
   Widget _buildTagCarousel(BuildContext context, List<LabelItemModel> tags) {
+    final List<LabelItemModel> selectedTags = [];
     return TagCarousel(
+      // Create a list to store the selected tags
       labels: tags,
+      selectedLabels: selectedTags, // Pass the selected tags to TagCarousel
       carouselType: CarouselType.TagPicker,
       onLabelTap: (selectedLabel) {
-        // Handle selected label in the tag picker context
-        print('Selected Tag: ${selectedLabel.label}');
+        // Update the selected tags list
+        if (!selectedLabel.isSelected) {
+          print('Deselected Tag: ${selectedLabel.label}');
+          selectedTags.add(selectedLabel);
+        } else {
+          print('Selected Tag: ${selectedLabel.label}');
+          selectedTags.removeWhere((tag) => tag.label == selectedLabel.label);
+        }
+        setState(() {});
       },
     );
   }
@@ -539,6 +552,65 @@ Widget build(BuildContext context) {
             'assets/images/image_not_found.png',
             'assets/images/image_not_found.png',
           ])
+        ],
+      ),
+    );
+  }
+
+  Widget _buildJournals(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                  top: 9.v,
+                  bottom: 1.v,
+                ),
+                child: Text(
+                  "Journal Pages".tr,
+                  style: CustomTextStyles.titleLargeBlack900,
+                ),
+              ),
+              _buildAdd(context),
+            ],
+          ),
+          ImageCarousel(imgList: [
+            'assets/images/image_not_found.png',
+            'assets/images/image_not_found.png',
+            'assets/images/image_not_found.png',
+          ])
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecordings(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                  top: 9.v,
+                  bottom: 1.v,
+                ),
+                child: Text(
+                  "Recordings".tr,
+                  style: CustomTextStyles.titleLargeBlack900,
+                ),
+              ),
+              _buildAdd(context),
+            ],
+          ),
         ],
       ),
     );

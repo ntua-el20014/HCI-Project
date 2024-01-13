@@ -4,17 +4,24 @@ import 'label_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
 
-class TagCarousel extends StatelessWidget {
+class TagCarousel extends StatefulWidget {
   final List<LabelItemModel> labels;
+  final List<LabelItemModel>? selectedLabels;
   final CarouselType carouselType;
   final void Function(LabelItemModel) onLabelTap;
 
   TagCarousel({
     required this.labels,
+    this.selectedLabels,
     required this.carouselType,
     required this.onLabelTap,
   });
 
+  @override
+  _TagCarouselState createState() => _TagCarouselState();
+}
+
+class _TagCarouselState extends State<TagCarousel> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,16 +32,19 @@ class TagCarousel extends StatelessWidget {
         separatorBuilder: (context, index) {
           return SizedBox(width: 13.h);
         },
-        itemCount: labels.length,
+        itemCount: widget.labels.length,
         itemBuilder: (context, index) {
-          LabelItemModel model = labels[index];
+          LabelItemModel model = widget.labels[index];
           return GestureDetector(
             onTap: () {
-              if (carouselType == CarouselType.TagPicker) {
+              if (widget.carouselType == CarouselType.TagPicker) {
                 // Tag Picker behavior
                 model.isSelected = !model.isSelected;
-                onLabelTap(model);
-              } else if (carouselType == CarouselType.FilterEditor) {
+                widget.onLabelTap(model);
+
+                // Update the state of TagCarousel directly
+                setState(() {});
+              } else if (widget.carouselType == CarouselType.FilterEditor) {
                 // Filter Editor behavior
                 // Implement the filter editor logic or show a dialog, etc.
                 // For now, just print the label when tapped
@@ -42,8 +52,8 @@ class TagCarousel extends StatelessWidget {
               }
             },
             child: LabelWidget(
-              hasShadow:
-                  carouselType == CarouselType.TagPicker && model.isSelected,
+              hasShadow: widget.carouselType == CarouselType.TagPicker &&
+                  (widget.selectedLabels != null ? model.isSelected : false),
               imagePath: model.iconPath,
               labelText: model.label,
               value: model.value,
