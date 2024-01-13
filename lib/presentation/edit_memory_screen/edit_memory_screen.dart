@@ -484,7 +484,8 @@ class EditMemoryScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
+                      Expanded(
+                        child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
@@ -523,6 +524,7 @@ class EditMemoryScreen extends StatelessWidget {
                             ),
                           ),
                         ],
+                      ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 26.v),

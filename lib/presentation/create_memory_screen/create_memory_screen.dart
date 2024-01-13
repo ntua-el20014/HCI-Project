@@ -6,12 +6,17 @@ import 'package:anamnesis/widgets/app_bar/appbar_leading_image.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_subtitle.dart';
 //import 'package:anamnesis/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:anamnesis/widgets/app_bar/custom_app_bar.dart';
-import 'package:anamnesis/widgets/custom_drop_down.dart';
 import 'package:anamnesis/widgets/custom_elevated_button.dart';
 import 'package:anamnesis/widgets/custom_floating_text_field.dart';
-import 'package:anamnesis/widgets/custom_icon_button.dart';
+import 'models/people_list.dart';
 //import '../side_menu_screen/side_menu_screen.dart';
 
+// Example usage
+final List<PeopleItemModel> peopleList = [
+  PeopleItemModel(name: "Person 1"),
+  PeopleItemModel(name: "Person 2"),
+  // Add more PeopleItemModel objects as needed
+];
 class CreateMemoryScreen extends StatelessWidget {
   const CreateMemoryScreen({Key? key})
       : super(
@@ -29,40 +34,33 @@ class CreateMemoryScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: _buildAppBar(context),
-        //drawer: SideMenuScreen(),
-        body: Container(
-          width: double.maxFinite,
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.h,
-            vertical: 7.v,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildTitle1(context),
-                SizedBox(height: 8.v),
-                _buildInputDatePicker(context),
-                SizedBox(height: 17.v),
-                _buildLocation(context),
-                SizedBox(height: 9.v),
-                _buildAddPeople(context),
-                SizedBox(height: 29.v),
-                _buildSelectTags(context),
-                SizedBox(height: 5.v),
-                _buildPhotos(context),
+        body: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _buildTitle1(context),
+            SizedBox(height: 8.v),
+            _buildInputDatePicker(context),
+            SizedBox(height: 17.v),
+            _buildLocation(context),
+            SizedBox(height: 9.v),
+            _buildAddPeople(context, peopleList),
+            SizedBox(height: 29.v),
+            _buildSelectTags(context),
+            SizedBox(height: 5.v),
+            _buildPhotos(context),
               ],
             ),
-          ),
-        ),
       ),
     );
   }
+
+
 
   /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
@@ -184,29 +182,21 @@ class CreateMemoryScreen extends StatelessWidget {
 
   /// Section Widget
   Widget _buildDate(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           "lbl_enter_dates".tr,
           style: CustomTextStyles.titleLarge20,
         ),
         SizedBox(height: 8.v),
-        Row(
-          children: [
-            Container(
+        Container(
             margin: EdgeInsets.symmetric(horizontal: 24.h),
             child: CustomImageView(
               imagePath: ImageConstant.imgIconsToday24px,
               height: 24.adaptSize,
-              width: 24.adaptSize,
-            ),
+            width: 24.adaptSize,
           ),
-            Text(
-              "Enter Dates", // Replace with your static text
-              style: CustomTextStyles.titleLarge20,
-          ),
-          ],
         ),
       ],
     );
@@ -306,6 +296,7 @@ class CreateMemoryScreen extends StatelessWidget {
                 suffix: Container(
                   margin: EdgeInsets.symmetric(horizontal: 12.h),
                   child: CustomImageView(
+                    color: appTheme.deepPurple500,
                     imagePath: ImageConstant.imgContrastDeepPurple500,
                     height: 24.adaptSize,
                     width: 24.adaptSize,
@@ -330,9 +321,11 @@ class CreateMemoryScreen extends StatelessWidget {
     );
   }
 
+
   /// Section Widget
-  Widget _buildAddPeople(BuildContext context) {
-    return Column(
+  Widget _buildAddPeople(BuildContext context, List<PeopleItemModel> people) {
+    return Container(
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -340,64 +333,13 @@ class CreateMemoryScreen extends StatelessWidget {
           style: CustomTextStyles.titleLargeBlack900,
         ),
         SizedBox(height: 13.v),
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.h,
-            vertical: 7.v,
-          ),
-          decoration: AppDecoration.fillGray,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomImageView(
-                imagePath: ImageConstant.imgLock,
-                height: 24.adaptSize,
-                width: 24.adaptSize,
-                margin: EdgeInsets.only(bottom: 1.v),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 16.h,
-                  bottom: 4.v,
-                ),
-                child: Text(
-                  "lbl_person_1".tr,
-                  style: theme.textTheme.bodyLarge,
-                ),
-              ),
-              Spacer(),
-              Container(
-                height: 24.adaptSize,
-                width: 24.adaptSize,
-                margin: EdgeInsets.only(bottom: 1.v),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: 18.adaptSize,
-                        width: 18.adaptSize,
-                        decoration: BoxDecoration(
-                          color: appTheme.deepPurple500,
-                          borderRadius: BorderRadius.circular(
-                            2.h,
-                          ),
-                        ),
-                      ),
-                    ),
-                    CustomImageView(
-                      imagePath: ImageConstant.imgIconsCheckSmall,
-                      height: 24.adaptSize,
-                      width: 24.adaptSize,
-                      alignment: Alignment.center,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+          PeopleList(people: people),
+        ],
+      ),
+    );
+
+    /*
+        
         Divider(),
         Container(
           padding: EdgeInsets.symmetric(
@@ -492,8 +434,7 @@ class CreateMemoryScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ListView(
-                        //crossAxisAlignment: CrossAxisAlignment.start,
+                        Column(
                         children: [
                           SizedBox(
                             height: 24.v,
@@ -551,12 +492,20 @@ class CreateMemoryScreen extends StatelessWidget {
           ),
         ),
       ],
+      ),
     );
+  */
   }
 
   /// Section Widget
   Widget _buildSelectTags(BuildContext context) {
-    return Padding(
+    return Text(
+      "lbl_select_tags".tr,
+      style: CustomTextStyles.titleLargeBlack900,
+    );
+    /*return Container(
+      width: double.infinity, // Provide a width constraint to the container
+      child: Padding(
       padding: EdgeInsets.only(right: 65.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -566,7 +515,12 @@ class CreateMemoryScreen extends StatelessWidget {
             style: CustomTextStyles.titleLargeBlack900,
           ),
           SizedBox(height: 14.v),
-          Row(
+            Expanded(
+              child: SingleChildScrollView(
+                // Add this
+                scrollDirection:
+                    Axis.horizontal, // Make the scrolling horizontal
+                child: Row(
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 4.v),
@@ -670,9 +624,13 @@ class CreateMemoryScreen extends StatelessWidget {
               ),
             ],
           ),
+              ),
+            ),
         ],
       ),
+      ),
     );
+  */
   }
 
   /// Section Widget
@@ -723,27 +681,30 @@ class CreateMemoryScreen extends StatelessWidget {
               top: 18.v,
               right: 16.h,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomImageView(
-                  imagePath: ImageConstant.imgItem1,
-                  height: 1.v,
-                  width: 116.h,
-                ),
-                CustomImageView(
-                  imagePath: ImageConstant.imgItem2,
-                  height: 1.v,
-                  width: 120.h,
-                  margin: EdgeInsets.only(left: 8.h),
-                ),
-                CustomImageView(
-                  imagePath: ImageConstant.imgItemLast,
-                  height: 1.v,
-                  width: 56.h,
-                  margin: EdgeInsets.only(left: 8.h),
-                ),
-              ],
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomImageView(
+                    imagePath: ImageConstant.imgItem1,
+                    height: 1.v,
+                    width: 116.h,
+                  ),
+                  CustomImageView(
+                    imagePath: ImageConstant.imgItem2,
+                    height: 1.v,
+                    width: 120.h,
+                    margin: EdgeInsets.only(left: 8.h),
+                  ),
+                  CustomImageView(
+                    imagePath: ImageConstant.imgItemLast,
+                    height: 1.v,
+                    width: 56.h,
+                    margin: EdgeInsets.only(left: 8.h),
+                  ),
+                ],
+            ),
             ),
           ),
         ],
