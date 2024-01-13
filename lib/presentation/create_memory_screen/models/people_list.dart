@@ -5,6 +5,7 @@ class PeopleItemModel {
   PeopleItemModel({
     this.name,
     this.isSelected,
+    this.id,
   }) {
     name = name ?? "";
     isSelected = isSelected ?? false;
@@ -12,6 +13,7 @@ class PeopleItemModel {
 
   String? name;
   bool? isSelected;
+  int? id;
 }
 
 class PeopleList extends StatefulWidget {
