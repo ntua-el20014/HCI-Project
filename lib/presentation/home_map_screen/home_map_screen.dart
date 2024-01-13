@@ -1,6 +1,7 @@
 import 'bloc/home_map_bloc.dart';
 //import 'dart:async';
 import 'models/home_map_model.dart';
+import 'widgets/map.dart';
 import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
 
@@ -17,12 +18,15 @@ class HomeMapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
-      child: Center(
-        child: Text("The map will appear here."),
-      ),
-    ));
+    return Container(
+      color: Colors.black,
+      child: Scaffold(
+          body: SafeArea(
+        child: Center(
+          child: Map(),
+        ),
+      )),
+    );
     // return BlocBuilder<HomeMapBloc, HomeMapState>(builder: (context, state) {
     //   return SafeArea(
     //       child: Scaffold(
@@ -41,17 +45,5 @@ class HomeMapScreen extends StatelessWidget {
     //                 _buildHomeMap(context)
     //               ]))));
     // });
-  }
-
-  /// Section Widget
-  Widget _buildHomeMap(BuildContext context) {
-    return SizedBox(
-      height: 771.v,
-      width: double.maxFinite,
-      child: Image.asset(
-        ImageConstant.imgMap, // Replace with the correct asset path
-        fit: BoxFit.cover,
-      ),
-    );
   }
 }
