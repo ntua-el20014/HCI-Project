@@ -15,8 +15,8 @@ class HomeMapBloc extends Bloc<HomeMapEvent, HomeMapState> {
     HomeMapInitialEvent event,
     Emitter<HomeMapState> emit,
   ) async {
-    NavigatorService.pushNamed(
-      AppRoutes.homeListScreen,
-    );
-}
+    emit(state.copyWith(
+        searchController: TextEditingController(),
+        tagController: TextEditingController()));
+  }
 }
