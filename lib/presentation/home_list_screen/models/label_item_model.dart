@@ -4,6 +4,7 @@ class LabelItemModel {
     this.iconPath,
     this.value,
     this.isSelected = false,
+    this.id,
   }) {
     label = label ?? "";
     iconPath = iconPath ?? "";
@@ -14,6 +15,7 @@ class LabelItemModel {
   String? iconPath;
   String? value;
   bool isSelected;
+  int? id;
 }
 
 enum CarouselType {

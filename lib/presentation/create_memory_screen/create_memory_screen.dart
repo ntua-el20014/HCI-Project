@@ -1,3 +1,4 @@
+import 'package:anamnesis/database/database.dart';
 import 'package:anamnesis/presentation/home_list_screen/models/tag_carousel_model.dart';
 import 'bloc/create_memory_bloc.dart';
 import 'models/create_memory_model.dart';
@@ -21,39 +22,40 @@ import '../create_memory_screen/models/image_carousel.dart';
 //import '../side_menu_screen/side_menu_screen.dart';
 
 // Example usage
-final List<PeopleItemModel> peopleList = [
-  PeopleItemModel(name: "Alice"),
-  PeopleItemModel(name: "Bob"),
-  // Add more PeopleItemModel objects as needed
-];
+// final List<PeopleItemModel> peopleList = [
+//   PeopleItemModel(name: "Alice"),
+//   PeopleItemModel(name: "Bob"),
+// Add more PeopleItemModel objects as needed
+// ];
 
-final List<LabelItemModel> tags = [
-  LabelItemModel(
-    label: 'Tag',
-    iconPath: ImageConstant.imgUser,
-    value: 'lbl_tag',
-  ),
-  LabelItemModel(
-    label: 'Date',
-    iconPath: ImageConstant.imgCalendar,
-    value: 'lbl_date',
-  ),
-  LabelItemModel(
-    label: 'Duration',
-    iconPath: ImageConstant.imgClock,
-    value: 'lbl_duration',
-  ),
-  LabelItemModel(
-    label: 'People',
-    iconPath: ImageConstant.imgContrast,
-    value: 'lbl_people',
-  ),
-  LabelItemModel(
-    label: 'People',
-    iconPath: ImageConstant.imgContrast,
-    value: 'lbl_people',
-  ),
-];
+// final List<LabelItemModel> tags = [
+//   LabelItemModel(
+//     label: 'Tag',
+//     iconPath: ImageConstant.imgUser,
+//     value: 'lbl_tag',
+//   ),
+//   LabelItemModel(
+//     label: 'Date',
+//     iconPath: ImageConstant.imgCalendar,
+//     value: 'lbl_date',
+//   ),
+//   LabelItemModel(
+//     label: 'Duration',
+//     iconPath: ImageConstant.imgClock,
+//     value: 'lbl_duration',
+//   ),
+//   LabelItemModel(
+//     label: 'People',
+//     iconPath: ImageConstant.imgContrast,
+//     value: 'lbl_people',
+//   ),
+//   LabelItemModel(
+//     label: 'People',
+//     iconPath: ImageConstant.imgContrast,
+//     value: 'lbl_people',
+//   ),
+// ];
+
 class CreateMemoryScreen extends StatelessWidget {
   const CreateMemoryScreen({Key? key})
       : super(
@@ -70,37 +72,82 @@ class CreateMemoryScreen extends StatelessWidget {
     );
   }
 
-  @override
-Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: _buildAppBar(context),
-        body: SingleChildScrollView(
-          child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-              SizedBox(height: 10.v),
-            _buildTitle1(context),
-              SizedBox(height: 15.v),
-            _buildInputDatePicker(context),
-              SizedBox(height: 20.v),
-            _buildLocation(context),
-              SizedBox(height: 20.v),
-            _buildAddPeople(context, peopleList),
-              SizedBox(height: 30.v),
-            _buildSelectTags(context),
-              SizedBox(height: 30.v),
-            _buildPhotos(context),
-              ],
-            ),
-        ),
-      ),
-    );
+  Future<Map<String, dynamic>> _getFutureData() async {
+    print("Getting future data...");
+    Map<String, dynamic> futureData = {"tags": [], "people": []};
+
+    DatabaseHelper dbHelper = DatabaseHelper();
+
+    // Create tags list
+    List<Map<String, dynamic>> tags = await dbHelper.getTags();
+    List<LabelItemModel> tagsList = [];
+    for (Map<String, dynamic> tag in tags) {
+      tagsList.add(LabelItemModel(
+        label: tag["label"],
+        iconPath: ImageConstant.imgUser,
+        id: tag["id"],
+      ));
+    }
+    futureData["tags"] = tagsList;
+
+    // Create people list
+    List<Map<String, dynamic>> people = await dbHelper.getPeople();
+    List<PeopleItemModel> peopleList = [];
+    for (Map<String, dynamic> person in people) {
+      peopleList.add(PeopleItemModel(
+        name: person["name"],
+        id: person["id"],
+      ));
+    }
+    futureData["people"] = peopleList;
+
+    return futureData;
   }
 
-
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: FutureBuilder<Map<String, dynamic>>(
+          future: _getFutureData(),
+          builder: ((context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                  child:
+                      CircularProgressIndicator()); // Show loading spinner while waiting for location
+            } else if (snapshot.hasError) {
+              return Text(
+                  'Error: ${snapshot.error}'); // Show error message if an error occurred
+            }
+            Map<String, dynamic> data =
+                snapshot.data ?? {"tags": [], "people": []};
+            print("Data: ${data['people']}");
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: _buildAppBar(context),
+              body: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10.v),
+                    _buildTitle1(context),
+                    SizedBox(height: 15.v),
+                    _buildInputDatePicker(context),
+                    SizedBox(height: 20.v),
+                    _buildLocation(context),
+                    SizedBox(height: 20.v),
+                    _buildAddPeople(context, data["people"]),
+                    SizedBox(height: 30.v),
+                    _buildSelectTags(context, data["tags"]),
+                    SizedBox(height: 30.v),
+                    _buildPhotos(context),
+                  ],
+                ),
+              ),
+            );
+          })),
+    );
+  }
 
   /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
@@ -220,10 +267,10 @@ Widget build(BuildContext context) {
         ),
         SizedBox(height: 8.v),
         Container(
-            margin: EdgeInsets.symmetric(horizontal: 24.h),
-            child: CustomImageView(
-              imagePath: ImageConstant.imgIconsToday24px,
-              height: 24.adaptSize,
+          margin: EdgeInsets.symmetric(horizontal: 24.h),
+          child: CustomImageView(
+            imagePath: ImageConstant.imgIconsToday24px,
+            height: 24.adaptSize,
             width: 24.adaptSize,
           ),
         ),
@@ -365,11 +412,11 @@ Widget build(BuildContext context) {
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 12.h),
                       child: CustomImageView(
-                    color: appTheme.deepPurple500,
-                    imagePath: ImageConstant.imgContrastDeepPurple500,
-                    height: 24.adaptSize,
-                    width: 24.adaptSize,
-                  ),
+                        color: appTheme.deepPurple500,
+                        imagePath: ImageConstant.imgContrastDeepPurple500,
+                        height: 24.adaptSize,
+                        width: 24.adaptSize,
+                      ),
                     ),
                   ),
                 ),
@@ -394,8 +441,8 @@ Widget build(BuildContext context) {
   Widget _buildAddPeople(BuildContext context, List<PeopleItemModel> people) {
     return Container(
       child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Padding(
             padding: EdgeInsets.only(left: 16.0),
             child: Text(
@@ -403,7 +450,7 @@ Widget build(BuildContext context) {
               style: CustomTextStyles.titleLargeBlack900,
             ),
           ),
-        SizedBox(height: 13.v),
+          SizedBox(height: 13.v),
           PeopleList(people: people),
         ],
       ),
@@ -411,7 +458,7 @@ Widget build(BuildContext context) {
   }
 
   /// Section Widget
-  Widget _buildSelectTags(BuildContext context) {
+  Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -482,7 +529,7 @@ Widget build(BuildContext context) {
         } else if (action == 'Pick from Gallery') {
           // ignore: deprecated_member_use
           pickedFile = await picker.getImage(source: ImageSource.gallery);
-  }
+        }
 
         if (pickedFile != null) {
           final appDir = await getApplicationDocumentsDirectory();

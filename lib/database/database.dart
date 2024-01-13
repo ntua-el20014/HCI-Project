@@ -96,8 +96,9 @@ class DatabaseHelper {
       'thumbnail': 'assets/images/img_thumbnail.png',
       'start_date': DateTime.now().toString(),
       'end_date': DateTime.now().toString(),
-      'location': '51.5074,0.1278',
-      'user_trip': '51.5074,0.1278;51.5075,0.1279',
+      'location': '38.5391242,21.9861981',
+      'user_trip':
+          '38.5391242,21.9861981;38.7391242,22.1861981;39.1391242,22.2861981',
       'track_location': 0,
     });
     await db.insert('memory', {
@@ -105,8 +106,9 @@ class DatabaseHelper {
       'thumbnail': 'assets/images/img_thumbnail_56x56.png',
       'start_date': DateTime.now().toString(),
       'end_date': DateTime.now().toString(),
-      'location': '41.5074,1.1278',
-      'user_trip': '41.5074,1.1278;41.5075,1.1279',
+      'location': '35.3775752,24.5683288',
+      'user_trip':
+          '35.3775752,24.5683288;36.3775752,24.7683288;37.3775752,23.5683288;36.7775752,24.5683288',
       'track_location': 0,
     });
 
@@ -166,13 +168,16 @@ class DatabaseHelper {
 
     // Insert into 'person' table
     await db.insert('person', {
-      'name': 'Person 1',
+      'name': 'Nick',
     });
     await db.insert('person', {
-      'name': 'Person 2',
+      'name': 'Mike',
     });
     await db.insert('person', {
-      'name': 'Person 3',
+      'name': 'Bill',
+    });
+    await db.insert('person', {
+      'name': 'Philip',
     });
 
     // Insert into 'memory_people' table
@@ -201,14 +206,12 @@ class DatabaseHelper {
 
   //Data insertion
   Future<int> insertTag({required label}) async {
-    print("Inserting tag");
     Tag tag = Tag(label: label);
     final db = await this.db;
     return await db.insert('tag', tag.toMap());
   }
 
   Future<int> insertPerson({required name}) async {
-    print("Inserting person");
     Person person = Person(name: name);
     final db = await this.db;
     return await db.insert('person', person.toMap());
@@ -227,7 +230,6 @@ class DatabaseHelper {
       List<String> recordings = const [],
       List<int> tags = const [],
       List<int> people = const []}) async {
-    print("Inserting memory");
     final db = await this.db;
     //Create memory table entry
     Memory memory = Memory(
@@ -271,7 +273,6 @@ class DatabaseHelper {
       MemoryPeople memPerson = MemoryPeople(memoryId: memId, personId: person);
       await db.insert('memory_people', memPerson.toMap());
     }
-    print("inserted memory with id: $memId");
     return memId;
   }
 
@@ -294,18 +295,15 @@ class DatabaseHelper {
     final db = await this.db;
     final List<Map<String, dynamic>> maps = await db.query('memory');
 
-    print("converting map to datatypeMap");
     List<Map<String, dynamic>> memories = [];
     for (int i = 0; i < maps.length; i++) {
       Map<String, dynamic> memory = Memory.fromMap(maps[i]).toDatatypeMap();
       memories.add(memory);
     }
-    print('returning ${memories[0]['location'].runtimeType}');
     return memories;
   }
 
   Future<Map<String, dynamic>> getMemoryInfo(int id) async {
-    print("Getting memory info");
     final db = await this.db;
     //Get basic memory info
     final List<Map<String, dynamic>> maps = await db.query(
@@ -322,7 +320,6 @@ class DatabaseHelper {
     }
 
     //If everything is ok:
-    print("converting map to datatypeMap");
     Map<String, dynamic> memory = Memory.fromMap(maps.first).toDatatypeMap();
 
     // Get images for this memory
