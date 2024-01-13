@@ -1,6 +1,8 @@
+import 'package:anamnesis/presentation/home_list_screen/models/tag_carousel_model.dart';
 import 'bloc/create_memory_bloc.dart';
 import 'models/create_memory_model.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:anamnesis/core/app_export.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_leading_image.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_subtitle.dart';
@@ -8,14 +10,49 @@ import 'package:anamnesis/widgets/app_bar/appbar_subtitle.dart';
 import 'package:anamnesis/widgets/app_bar/custom_app_bar.dart';
 import 'package:anamnesis/widgets/custom_elevated_button.dart';
 import 'package:anamnesis/widgets/custom_floating_text_field.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'models/people_list.dart';
+import '../home_list_screen/models/label_item_model.dart';
+import '../create_memory_screen/models/image_carousel.dart';
+//import '../home_list_screen/widgets/label_widget.dart';
 //import '../side_menu_screen/side_menu_screen.dart';
 
 // Example usage
 final List<PeopleItemModel> peopleList = [
-  PeopleItemModel(name: "Person 1"),
-  PeopleItemModel(name: "Person 2"),
+  PeopleItemModel(name: "Alice"),
+  PeopleItemModel(name: "Bob"),
   // Add more PeopleItemModel objects as needed
+];
+
+final List<LabelItemModel> tags = [
+  LabelItemModel(
+    label: 'Tag',
+    iconPath: ImageConstant.imgUser,
+    value: 'lbl_tag',
+  ),
+  LabelItemModel(
+    label: 'Date',
+    iconPath: ImageConstant.imgCalendar,
+    value: 'lbl_date',
+  ),
+  LabelItemModel(
+    label: 'Duration',
+    iconPath: ImageConstant.imgClock,
+    value: 'lbl_duration',
+  ),
+  LabelItemModel(
+    label: 'People',
+    iconPath: ImageConstant.imgContrast,
+    value: 'lbl_people',
+  ),
+  LabelItemModel(
+    label: 'People',
+    iconPath: ImageConstant.imgContrast,
+    value: 'lbl_people',
+  ),
 ];
 class CreateMemoryScreen extends StatelessWidget {
   const CreateMemoryScreen({Key? key})
@@ -39,23 +76,26 @@ Widget build(BuildContext context) {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: _buildAppBar(context),
-        body: Column(
+        body: SingleChildScrollView(
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+              SizedBox(height: 10.v),
             _buildTitle1(context),
-            SizedBox(height: 8.v),
+              SizedBox(height: 15.v),
             _buildInputDatePicker(context),
-            SizedBox(height: 17.v),
+              SizedBox(height: 20.v),
             _buildLocation(context),
-            SizedBox(height: 9.v),
+              SizedBox(height: 20.v),
             _buildAddPeople(context, peopleList),
-            SizedBox(height: 29.v),
+              SizedBox(height: 30.v),
             _buildSelectTags(context),
-            SizedBox(height: 5.v),
+              SizedBox(height: 30.v),
             _buildPhotos(context),
               ],
             ),
+        ),
       ),
     );
   }
@@ -140,17 +180,6 @@ Widget build(BuildContext context) {
           labelText: "lbl_title".tr,
           labelStyle: CustomTextStyles.titleLarge20_1,
           hintText: "lbl_title".tr,
-          suffix: Container(
-            margin: EdgeInsets.symmetric(horizontal: 12.h),
-            child: CustomImageView(
-              imagePath: ImageConstant.imgIcon,
-              height: 20.adaptSize,
-              width: 20.adaptSize,
-            ),
-          ),
-          suffixConstraints: BoxConstraints(
-            maxHeight: 67.v,
-          ),
         );
       },
     );
@@ -287,24 +316,64 @@ Widget build(BuildContext context) {
               TextEditingController?>(
             selector: (state) => state.locationController,
             builder: (context, locationController) {
-              return CustomFloatingTextField(
+              return TextField(
+                autofocus: false,
+                maxLines: 1,
+                scrollPadding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
                 controller: locationController,
-                labelText: "lbl_location".tr,
-                labelStyle: CustomTextStyles.titleLarge20_1,
-                hintText: "lbl_location".tr,
-                textInputAction: TextInputAction.done,
-                suffix: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 12.h),
-                  child: CustomImageView(
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(13.h, 17.v, 13.h, 13.v),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: appTheme.blueGray100,
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: appTheme.blueGray100,
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4.h),
+                    borderSide: BorderSide(
+                      color: appTheme.deepPurple500,
+                      width: 3,
+                    ),
+                  ),
+                  isDense: true,
+                  labelText: "lbl_location".tr,
+                  labelStyle: CustomTextStyles.titleLarge20_1,
+                  hintText: "lbl_location".tr,
+                  suffixIcon: GestureDetector(
+                    onTap: () async {
+                      // Get current location
+                      try {
+                        Position position = await Geolocator.getCurrentPosition(
+                            desiredAccuracy: LocationAccuracy.high);
+                        String locationString =
+                            "${position.latitude}, ${position.longitude}";
+
+                        // Update text controller with the current location
+                        locationController?.text = locationString;
+                      } catch (e) {
+                        print("Error getting location: $e");
+                      }
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 12.h),
+                      child: CustomImageView(
                     color: appTheme.deepPurple500,
                     imagePath: ImageConstant.imgContrastDeepPurple500,
                     height: 24.adaptSize,
                     width: 24.adaptSize,
                   ),
+                    ),
+                  ),
                 ),
-                suffixConstraints: BoxConstraints(
-                  maxHeight: 68.v,
-                ),
+                textInputAction: TextInputAction.done,
               );
             },
           ),
@@ -321,323 +390,113 @@ Widget build(BuildContext context) {
     );
   }
 
-
   /// Section Widget
   Widget _buildAddPeople(BuildContext context, List<PeopleItemModel> people) {
     return Container(
       child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "lbl_add_people".tr,
-          style: CustomTextStyles.titleLargeBlack900,
-        ),
+          Padding(
+            padding: EdgeInsets.only(left: 16.0),
+            child: Text(
+              "lbl_add_people".tr,
+              style: CustomTextStyles.titleLargeBlack900,
+            ),
+          ),
         SizedBox(height: 13.v),
           PeopleList(people: people),
         ],
       ),
     );
-
-    /*
-        
-        Divider(),
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.h,
-            vertical: 7.v,
-          ),
-          decoration: AppDecoration.fillGray,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomImageView(
-                imagePath: ImageConstant.imgLock,
-                height: 24.adaptSize,
-                width: 24.adaptSize,
-                margin: EdgeInsets.only(bottom: 1.v),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 16.h,
-                  bottom: 4.v,
-                ),
-                child: Text(
-                  "lbl_person_2".tr,
-                  style: theme.textTheme.bodyLarge,
-                ),
-              ),
-              Spacer(),
-              Container(
-                height: 24.adaptSize,
-                width: 24.adaptSize,
-                margin: EdgeInsets.only(bottom: 1.v),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: 18.adaptSize,
-                        width: 18.adaptSize,
-                        decoration: BoxDecoration(
-                          color: appTheme.deepPurple500,
-                          borderRadius: BorderRadius.circular(
-                            2.h,
-                          ),
-                        ),
-                      ),
-                    ),
-                    CustomImageView(
-                      imagePath: ImageConstant.imgIconsCheckSmall,
-                      height: 24.adaptSize,
-                      width: 24.adaptSize,
-                      alignment: Alignment.center,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        Divider(),
-        SizedBox(height: 3.v),
-        SizedBox(
-          height: 65.v,
-          width: 334.h,
-          child: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  height: 55.v,
-                  width: 334.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                      4.h,
-                    ),
-                    border: Border.all(
-                      color: appTheme.gray600,
-                      width: 1.h,
-                    ),
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 12.h,
-                    right: 12.h,
-                    bottom: 13.v,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                        Column(
-                        children: [
-                          SizedBox(
-                            height: 24.v,
-                            width: 152.h,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Container(
-                                    height: 16.v,
-                                    width: 152.h,
-                                    margin: EdgeInsets.only(top: 2.v),
-                                    decoration: BoxDecoration(
-                                      color: appTheme.gray50,
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "lbl_add_new_person".tr,
-                                    style: CustomTextStyles.titleLargeGray80020,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 4.v),
-                          Padding(
-                            padding: EdgeInsets.only(left: 4.h),
-                            child: Text(
-                              "lbl_new_person".tr,
-                              style: CustomTextStyles.titleLarge20_1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 26.v),
-                        child: CustomIconButton(
-                          height: 24.adaptSize,
-                          width: 24.adaptSize,
-                          padding: EdgeInsets.all(2.h),
-                          child: CustomImageView(
-                            imagePath: ImageConstant.imgIcon,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-      ),
-    );
-  */
   }
 
   /// Section Widget
   Widget _buildSelectTags(BuildContext context) {
-    return Text(
-      "lbl_select_tags".tr,
-      style: CustomTextStyles.titleLargeBlack900,
-    );
-    /*return Container(
-      width: double.infinity, // Provide a width constraint to the container
-      child: Padding(
-      padding: EdgeInsets.only(right: 65.h),
+    return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "lbl_select_tags".tr,
-            style: CustomTextStyles.titleLargeBlack900,
-          ),
-          SizedBox(height: 14.v),
-            Expanded(
-              child: SingleChildScrollView(
-                // Add this
-                scrollDirection:
-                    Axis.horizontal, // Make the scrolling horizontal
-                child: Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.v),
-                child: BlocSelector<CreateMemoryBloc, CreateMemoryState,
-                    CreateMemoryModel?>(
-                  selector: (state) => state.createMemoryModelObj,
-                  builder: (context, createMemoryModelObj) {
-                    return CustomDropDown(
-                      width: 103.h,
-                      icon: Container(
-                        margin: EdgeInsets.fromLTRB(9.h, 7.v, 8.h, 7.v),
-                        child: CustomImageView(
-                          imagePath: ImageConstant.imgTrailingIcon,
-                          height: 18.adaptSize,
-                          width: 18.adaptSize,
-                        ),
-                      ),
-                      hintText: "lbl_tag_1".tr,
-                      items: createMemoryModelObj?.dropdownItemList ?? [],
-                      prefix: Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 8.h,
-                          vertical: 7.v,
-                        ),
-                        child: CustomImageView(
-                          imagePath: ImageConstant.imgSelectedIcon,
-                          height: 18.adaptSize,
-                          width: 18.adaptSize,
-                        ),
-                      ),
-                      prefixConstraints: BoxConstraints(
-                        maxHeight: 32.v,
-                      ),
-                      onChanged: (value) {
-                        context
-                            .read<CreateMemoryBloc>()
-                            .add(ChangeDropDownEvent(value: value));
-                      },
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 10.h,
-                  top: 4.v,
-                  bottom: 4.v,
-                ),
-                child: BlocSelector<CreateMemoryBloc, CreateMemoryState,
-                    CreateMemoryModel?>(
-                  selector: (state) => state.createMemoryModelObj,
-                  builder: (context, createMemoryModelObj) {
-                    return CustomDropDown(
-                      width: 103.h,
-                      icon: Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 8.h,
-                          vertical: 7.v,
-                        ),
-                        child: CustomImageView(
-                          imagePath: ImageConstant.imgTrailingIcon,
-                          height: 18.adaptSize,
-                          width: 18.adaptSize,
-                        ),
-                      ),
-                      hintText: "lbl_tag_2".tr,
-                      items: createMemoryModelObj?.dropdownItemList1 ?? [],
-                      prefix: Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 8.h,
-                          vertical: 7.v,
-                        ),
-                        child: CustomImageView(
-                          imagePath: ImageConstant.imgSelectedIcon,
-                          height: 18.adaptSize,
-                          width: 18.adaptSize,
-                        ),
-                      ),
-                      prefixConstraints: BoxConstraints(
-                        maxHeight: 32.v,
-                      ),
-                      onChanged: (value) {
-                        context
-                            .read<CreateMemoryBloc>()
-                            .add(ChangeDropDown1Event(value: value));
-                      },
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 18.h),
-                child: CustomIconButton(
-                  height: 40.adaptSize,
-                  width: 40.adaptSize,
-                  padding: EdgeInsets.all(8.h),
-                  child: CustomImageView(
-                    imagePath: ImageConstant.imgPlusGray900,
-                  ),
-                ),
-              ),
-            ],
-          ),
-              ),
+          Padding(
+            padding: EdgeInsets.only(left: 16.0),
+            child: Text(
+              "lbl_select_tags".tr,
+              style: CustomTextStyles.titleLargeBlack900,
             ),
+          ),
+          SizedBox(
+            width: double.maxFinite,
+            child: _buildTagCarousel(context, tags),
+          ),
         ],
       ),
-      ),
     );
-  */
+  }
+
+  /// Section Widget
+  Widget _buildTagCarousel(BuildContext context, List<LabelItemModel> tags) {
+    return TagCarousel(
+      labels: tags,
+      carouselType: CarouselType.TagPicker,
+      onLabelTap: (selectedLabel) {
+        // Handle selected label in the tag picker context
+        print('Selected Tag: ${selectedLabel.label}');
+      },
+    );
   }
 
   /// Section Widget
   Widget _buildAdd(BuildContext context) {
     return CustomElevatedButton(
+      onPressed: () async {
+        final picker = ImagePicker();
+        PickedFile? pickedFile;
+
+        // Let the user choose between taking a new picture or picking from gallery
+        final action = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Add a new picture'),
+              content: Text('Choose an option'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Take a Picture'),
+                  onPressed: () {
+                    Navigator.pop(context, 'Take a Picture');
+                  },
+                ),
+                TextButton(
+                  child: Text('Pick from Gallery'),
+                  onPressed: () {
+                    Navigator.pop(context, 'Pick from Gallery');
+                  },
+                ),
+              ],
+            );
+          },
+        );
+
+        if (action == 'Take a Picture') {
+          // ignore: deprecated_member_use
+          pickedFile = await picker.getImage(source: ImageSource.camera);
+        } else if (action == 'Pick from Gallery') {
+          // ignore: deprecated_member_use
+          pickedFile = await picker.getImage(source: ImageSource.gallery);
+  }
+
+        if (pickedFile != null) {
+          final appDir = await getApplicationDocumentsDirectory();
+          final fileName = path.basename(pickedFile.path);
+          final savedImage =
+              await File(pickedFile.path).copy('${appDir.path}/$fileName');
+
+          print(savedImage); // Add the image to your album
+          // ...
+        }
+      },
       height: 35.v,
-      width: 92.h,
+      width: 75.h,
+      decoration: null,
       text: "lbl_add".tr,
       leftIcon: Container(
         margin: EdgeInsets.only(right: 8.h),
@@ -675,38 +534,11 @@ Widget build(BuildContext context) {
               _buildAdd(context),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(
-              left: 16.h,
-              top: 18.v,
-              right: 16.h,
-            ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomImageView(
-                    imagePath: ImageConstant.imgItem1,
-                    height: 1.v,
-                    width: 116.h,
-                  ),
-                  CustomImageView(
-                    imagePath: ImageConstant.imgItem2,
-                    height: 1.v,
-                    width: 120.h,
-                    margin: EdgeInsets.only(left: 8.h),
-                  ),
-                  CustomImageView(
-                    imagePath: ImageConstant.imgItemLast,
-                    height: 1.v,
-                    width: 56.h,
-                    margin: EdgeInsets.only(left: 8.h),
-                  ),
-                ],
-            ),
-            ),
-          ),
+          ImageCarousel(imgList: [
+            'assets/images/image_not_found.png',
+            'assets/images/image_not_found.png',
+            'assets/images/image_not_found.png',
+          ])
         ],
       ),
     );

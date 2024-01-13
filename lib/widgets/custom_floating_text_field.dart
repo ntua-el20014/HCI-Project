@@ -80,6 +80,12 @@ class CustomFloatingTextField extends StatelessWidget {
 
   final FormFieldValidator<String>? validator;
 
+  void clearTextField() {
+    // Call setState to trigger a rebuild of the widget tree
+    // Clear the text in the text controller
+    controller?.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return alignment != null

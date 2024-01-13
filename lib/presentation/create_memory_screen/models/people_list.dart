@@ -47,9 +47,7 @@ class _PeopleListState extends State<PeopleList> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomImageView(
-                      imagePath: person.isSelected ?? false
-                          ? ImageConstant.imgIconsCheckSmall
-                          : ImageConstant.imgLock,
+                      imagePath: ImageConstant.imgLock,
                       height: 24.adaptSize,
                       width: 24.adaptSize,
                       margin: EdgeInsets.only(bottom: 1.v),
@@ -78,21 +76,27 @@ class _PeopleListState extends State<PeopleList> {
                               height: 18.adaptSize,
                               width: 18.adaptSize,
                               decoration: BoxDecoration(
-                                color: appTheme.deepPurple500,
+                                border: Border.all(
+                                  width: 1.h,
+                                  color: appTheme.black900,
+                                ),
+                                color: appTheme.gray50,
                                 borderRadius: BorderRadius.circular(
                                   2.h,
                                 ),
                               ),
                             ),
                           ),
-                          CustomImageView(
-                            imagePath: person.isSelected ?? false
-                                ? ImageConstant.imgIconsCheckSmall
-                                : ImageConstant.imgLock,
-                            height: 24.adaptSize,
-                            width: 24.adaptSize,
-                            alignment: Alignment.center,
-                          ),
+                          person.isSelected == true
+                              ? CustomImageView(
+                                  imagePath: ImageConstant.imgIconsCheckSmall,
+                                  height: 24.adaptSize,
+                                  width: 24.adaptSize,
+                                  alignment: Alignment.center,
+                                )
+                              : Container(
+                                  color: Colors.transparent,
+                                ),
                         ],
                       ),
                     ),

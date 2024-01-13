@@ -1,3 +1,4 @@
+import 'package:anamnesis/presentation/home_list_screen/models/tag_carousel_model.dart';
 import '../home_list_screen/widgets/homelist_item_widget.dart';
 import 'widgets/permission_request.dart';
 import 'bloc/home_list_bloc.dart';
@@ -9,22 +10,31 @@ import 'package:anamnesis/widgets/custom_floating_button.dart';
 import 'package:anamnesis/widgets/custom_search_view.dart';
 //import 'package:anamnesis/widgets/custom_text_form_field.dart';
 import 'models/label_item_model.dart';
-import 'widgets/label_widget.dart';
+//import 'widgets/label_widget.dart';
 
-final List<LabelItemModel> labels = [
+final List<LabelItemModel> filters = [
   LabelItemModel(
-      label: 'Tag', iconPath: ImageConstant.imgUser, value: 'lbl_tag'),
+    label: 'Tag',
+    iconPath: ImageConstant.imgUser,
+    value: 'lbl_tag',
+  ),
   LabelItemModel(
-      label: 'Date', iconPath: ImageConstant.imgCalendar, value: 'lbl_date'),
+    label: 'Date',
+    iconPath: ImageConstant.imgCalendar,
+    value: 'lbl_date',
+  ),
   LabelItemModel(
-      label: 'Duration',
-      iconPath: ImageConstant.imgClock,
-      value: 'lbl_duration'),
+    label: 'Duration',
+    iconPath: ImageConstant.imgClock,
+    value: 'lbl_duration',
+  ),
   LabelItemModel(
-      label: 'People',
-      iconPath: ImageConstant.imgContrast,
-      value: 'lbl_people'),
+    label: 'People',
+    iconPath: ImageConstant.imgContrast,
+    value: 'lbl_people',
+  ),
 ];
+
 
 class HomeListScreen extends StatelessWidget {
   const HomeListScreen({Key? key}) : super(key: key);
@@ -88,7 +98,7 @@ class HomeListScreen extends StatelessWidget {
                   }),
               SizedBox(
                 width: double.maxFinite,
-                child: _buildLabelCarousel(context, labels),
+                child: _buildLabelCarousel(context, filters),
               ),
             ]));
   }
@@ -168,25 +178,14 @@ class HomeListScreen extends StatelessWidget {
   }
 }
 
-Widget _buildLabelCarousel(BuildContext context, List<LabelItemModel> labels) {
-  return Container(
-    height: 55.v,
-    padding: EdgeInsets.symmetric(vertical: 6.v),
-    decoration: AppDecoration.fillWhiteA,
-    child: ListView.separated(
-      scrollDirection: Axis.horizontal,
-      separatorBuilder: (context, index) {
-        return SizedBox(width: 13.h);
-      },
-      itemCount: labels.length,
-      itemBuilder: (context, index) {
-        LabelItemModel model = labels[index];
-        return LabelWidget(
-          imagePath: model.iconPath,
-          labelText: model.label,
-          value: model.value, // Pass the value here
-        );
-      },
-    ),
+Widget _buildLabelCarousel(BuildContext context, List<LabelItemModel> filters) {
+  return TagCarousel(
+    labels: filters,
+    carouselType: CarouselType.FilterEditor,
+    onLabelTap: (selectedFilter) {
+      // Handle selected filter in the filter editor context
+      print('Selected Filter: ${selectedFilter.label}');
+      // You can add more logic here based on the selected filter
+    },
   );
 }

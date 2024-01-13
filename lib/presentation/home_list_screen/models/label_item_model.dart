@@ -3,6 +3,7 @@ class LabelItemModel {
     this.label,
     this.iconPath,
     this.value,
+    this.isSelected = false,
   }) {
     label = label ?? "";
     iconPath = iconPath ?? "";
@@ -12,4 +13,10 @@ class LabelItemModel {
   String? label;
   String? iconPath;
   String? value;
+  bool isSelected;
+}
+
+enum CarouselType {
+  TagPicker,
+  FilterEditor,
 }

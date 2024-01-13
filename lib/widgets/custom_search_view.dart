@@ -87,23 +87,6 @@ class CustomSearchView extends StatelessWidget {
 
   Widget searchViewWidget(BuildContext context) => SizedBox(
         width: width ?? double.maxFinite,
-<<<<<<< HEAD
-        child: TextFormField(
-          scrollPadding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          controller: controller,
-          focusNode: focusNode ?? FocusNode(),
-          autofocus: autofocus ?? false,
-          style: textStyle ?? CustomTextStyles.bodyLargeGray800_1,
-          keyboardType: textInputType,
-          maxLines: maxLines ?? 1,
-          textInputAction: TextInputAction.none,
-          decoration: decoration(context),
-          validator: validator,
-          onChanged: (String value) {
-            onChanged!.call(value);
-          },
-=======
         child: Container(
           decoration: BoxDecoration(
             boxShadow: hasShadow
@@ -134,9 +117,9 @@ class CustomSearchView extends StatelessWidget {
               onChanged!.call(value);
             },
           ),
->>>>>>> 18cc0c07b0a4d73ccd014ce3e4178285cff7c92c
         ),
       );
+
   InputDecoration decoration(BuildContext context) => InputDecoration(
         hintText: hintText ?? "",
         hintStyle: hintStyle ?? CustomTextStyles.bodyLargeGray800_1,
