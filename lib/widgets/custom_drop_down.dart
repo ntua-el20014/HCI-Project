@@ -8,7 +8,7 @@ class CustomDropDown extends StatelessWidget {
     this.width,
     this.focusNode,
     this.icon,
-    this.autofocus = true,
+    this.autofocus = false,
     this.textStyle,
     this.items,
     this.hintText,
@@ -80,7 +80,7 @@ class CustomDropDown extends StatelessWidget {
         child: DropdownButtonFormField<SelectionPopupModel>(
           focusNode: focusNode ?? FocusNode(),
           icon: icon,
-          autofocus: autofocus!,
+          autofocus: autofocus ?? false,
           style: textStyle ?? theme.textTheme.titleSmall,
           items: items?.map((SelectionPopupModel item) {
             return DropdownMenuItem<SelectionPopupModel>(
