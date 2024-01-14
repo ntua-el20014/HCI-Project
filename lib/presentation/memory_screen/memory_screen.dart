@@ -32,10 +32,13 @@ class MemoryScreen extends StatelessWidget {
     return BlocSelector<MemoryBloc, MemoryState, MemoryModel>(
         selector: (state) => state.memoryModelObj!,
         builder: (context, memoryModelObj) {
-          if (memoryModelObj.loaded == false) return Container();
+          if (memoryModelObj.loaded == false)
+            return Container(
+              color: Colors.white,
+            );
           return SafeArea(
               child: Scaffold(
-                  appBar: _buildAppBar(context),
+                  appBar: _buildAppBar(context, memoryModelObj),
                   body: SizedBox(
                       width: SizeUtils.width,
                       child: SingleChildScrollView(
@@ -55,7 +58,8 @@ class MemoryScreen extends StatelessWidget {
                             Container(
                                 width: 215.h,
                                 margin: EdgeInsets.only(left: 10.h),
-                                child: Text("msg_start_date_dd_mm_yyyy".tr,
+                                child: Text(
+                                    "${memoryModelObj.start_date}  to ${memoryModelObj.start_date},\n ${memoryModelObj.location}",
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: theme.textTheme.bodyMedium!
@@ -63,24 +67,15 @@ class MemoryScreen extends StatelessWidget {
                             SizedBox(height: 16.v),
                             Padding(
                                 padding: EdgeInsets.only(left: 10.h),
-                                child: Text("lbl_people".tr,
+                                child: Text("People",
                                     style: theme.textTheme.titleMedium)),
                             SizedBox(height: 4.v),
                             Padding(
                                 padding: EdgeInsets.only(left: 10.h),
-                                child: Text("msg_person_1_person".tr,
+                                child: Text(_getPeople(memoryModelObj),
                                     style: theme.textTheme.bodyMedium)),
                             SizedBox(height: 18.v),
-                            Padding(
-                                padding: EdgeInsets.only(left: 10.h),
-                                child: Row(children: [
-                                  CustomElevatedButton(
-                                      width: 64.h, text: "lbl_ntua".tr),
-                                  CustomElevatedButton(
-                                      width: 139.h,
-                                      text: "msg_beers_with_the_boys".tr,
-                                      margin: EdgeInsets.only(left: 22.h))
-                                ])),
+                            _buildTags(context, memoryModelObj),
                             SizedBox(height: 18.v),
                             _buildPhotos(context),
                             _buildPhotosCarousel(context),
@@ -117,7 +112,8 @@ class MemoryScreen extends StatelessWidget {
   }
 
   /// Section Widget
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  PreferredSizeWidget _buildAppBar(
+      BuildContext context, MemoryModel memoryModelObj) {
     return CustomAppBar(
         leadingWidth: 40.h,
         leading: AppbarLeadingImage(
@@ -125,7 +121,7 @@ class MemoryScreen extends StatelessWidget {
             imagePath: ImageConstant.imgMegaphone,
             margin: EdgeInsets.only(left: 16.h, top: 12.v, bottom: 12.v)),
         centerTitle: true,
-        title: AppbarSubtitle(text: "lbl_memory_title".tr),
+        title: AppbarSubtitle(text: memoryModelObj.title),
         actions: [
           AppbarTrailingImage(
               imagePath: ImageConstant.imgNotification,
@@ -133,6 +129,43 @@ class MemoryScreen extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: 14.h, vertical: 12.v))
         ],
         styleType: Style.bgShadow);
+  }
+
+  String _getPeople(MemoryModel memoryModelObj) {
+    String people = '';
+    for (int i = 0; i < memoryModelObj.people.length; i++) {
+      people += memoryModelObj.people[i]["name"] + ', ';
+    }
+    if (people == '')
+      people = "Just you";
+    else
+      people = people.substring(0, people.length - 2); //remove last comma
+    return people;
+  }
+
+  Widget _buildTags(BuildContext context, MemoryModel memoryModelObj) {
+    List<Widget> children = [];
+    for (int i = 0; i < memoryModelObj.tags.length; i++) {
+      children.add(
+        ElevatedButton(
+          onPressed: () {},
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              memoryModelObj.tags[i]["label"],
+            ),
+          ),
+        ),
+      );
+    }
+    return Padding(
+      padding: EdgeInsets.only(left: 10.h),
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 4.0,
+        children: children,
+      ),
+    );
   }
 
   /// Section Widget
