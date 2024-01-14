@@ -18,39 +18,6 @@ import '../home_list_screen/models/label_item_model.dart';
 import '../create_memory_screen/models/image_carousel.dart';
 import 'package:path/path.dart' as path;
 
-// final List<PeopleItemModel> peopleList = [
-//   PeopleItemModel(name: "Alice"),
-//   PeopleItemModel(name: "Bob"),
-// Add more PeopleItemModel objects as needed
-// ];
-
-// final List<LabelItemModel> tags = [
-//   LabelItemModel(
-//     label: 'Tag',
-//     iconPath: ImageConstant.imgUser,
-//     value: 'lbl_tag',
-//   ),
-//   LabelItemModel(
-//     label: 'Date',
-//     iconPath: ImageConstant.imgCalendar,
-//     value: 'lbl_date',
-//   ),
-//   LabelItemModel(
-//     label: 'Duration',
-//     iconPath: ImageConstant.imgClock,
-//     value: 'lbl_duration',
-//   ),
-//   LabelItemModel(
-//     label: 'People',
-//     iconPath: ImageConstant.imgContrast,
-//     value: 'lbl_people',
-//   ),
-//   LabelItemModel(
-//     label: 'People',
-//     iconPath: ImageConstant.imgContrast,
-//     value: 'lbl_people',
-//   ),
-// ];
 class CreateMemoryScreen extends StatefulWidget {
   const CreateMemoryScreen({Key? key}) : super(key: key);
 
@@ -105,24 +72,20 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
   @override
 Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: _buildAppBar(context),
-        body: SingleChildScrollView(
-          child: FutureBuilder<Map<String, dynamic>>(
-              future: _getFutureData(),
-              builder: ((context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                      child:
-                          CircularProgressIndicator()); // Show loading spinner while waiting for location
-                } else if (snapshot.hasError) {
-                  return Text(
-                      'Error: ${snapshot.error}'); // Show error message if an error occurred
-                }
-                Map<String, dynamic> data =
-                    snapshot.data ?? {"tags": [], "people": []};
-                print("Data: ${data['people']}");
+      child: FutureBuilder<Map<String, dynamic>>(
+          future: _getFutureData(),
+          builder: ((context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                  child:
+                      CircularProgressIndicator()); // Show loading spinner while waiting for location
+            } else if (snapshot.hasError) {
+              return Text(
+                  'Error: ${snapshot.error}'); // Show error message if an error occurred
+            }
+            Map<String, dynamic> data =
+                snapshot.data ?? {"tags": [], "people": []};
+            print("Data: ${data['people']}");
                 return Scaffold(
                   resizeToAvoidBottomInset: false,
                   appBar: _buildAppBar(context),
@@ -147,13 +110,11 @@ Widget build(BuildContext context) {
                         _buildJournals(context),
                         SizedBox(height: 30.v),
                         _buildRecordings(context),
-                      ],
-                    ),
-                  ),
-                );
-              })),
-        ),
-      ),
+                  ],
+                ),
+              ),
+            );
+          })),
     );
   }
 
@@ -504,7 +465,7 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
           print('Selected Tag: ${selectedLabel.label}');
           selectedTags.removeWhere((tag) => tag.label == selectedLabel.label);
         }
-        setState(() {});
+        //setState(() {});
       },
     );
   }
@@ -656,7 +617,7 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
                   bottom: 1.v,
                 ),
                 child: Text(
-                  "Journal Pages".tr,
+                  "Recordings".tr,
                   style: CustomTextStyles.titleLargeBlack900,
                 ),
               ),
@@ -667,4 +628,5 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
       ),
     );
   }
+
 }

@@ -47,17 +47,17 @@ Widget build(BuildContext context) {
                 Text("lbl_people".tr, style: theme.textTheme.bodyLarge),
                 SizedBox(height: 35.v),
                 GestureDetector(
+                  onTap: () => showAddPeopleDialog(context),
+                  child: Text("+ Add new people".tr,
+                      style: theme.textTheme.bodyLarge),
+                ),
+                SizedBox(height: 35.v),
+                GestureDetector(
                   onTap: () => showAddTagDialog(context),
                   child: Text("msg_create_new_tag".tr,
                       style: theme.textTheme.bodyLarge),
                 ),
                 SizedBox(height: 36.v),
-                /*Text("lbl_drafts".tr, style: theme.textTheme.bodyLarge),
-                SizedBox(height: 38.v),
-                Text("lbl_insights".tr, style: theme.textTheme.bodyLarge),
-                SizedBox(height: 35.v),
-                Text("lbl_trash".tr, style: theme.textTheme.bodyLarge),
-                SizedBox(height: 38.v),*/
                 Text("lbl_settings".tr, style: theme.textTheme.bodyLarge),
                 SizedBox(height: 35.v),
                 Text("lbl_about".tr, style: theme.textTheme.bodyLarge),
@@ -107,6 +107,56 @@ void showAddTagDialog(BuildContext context) {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: 'Enter your tag',
+                  ),
+                ),
+                SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      child: Text('Close'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: Text('Add'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        // Add your add button logic here
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void showAddPeopleDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ), //this right here
+        child: Container(
+          height: 200,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Add a new person',
                   ),
                 ),
                 SizedBox(height: 24),
