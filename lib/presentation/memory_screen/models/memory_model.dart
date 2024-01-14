@@ -9,17 +9,18 @@ import 'userprofile1_item_model.dart';
 class MemoryModel extends Equatable {
   MemoryModel({
     required this.id,
-    this.title = "",
-    this.thumbnail = "",
-    this.start_date = "",
-    this.end_date = "",
-    this.location = "",
+    this.title = "Untitled Memory",
+    this.thumbnail = "assets/images/image_not_found.png",
+    this.start_date = "No start date",
+    this.end_date = "No end date",
+    this.location = "No location",
     this.images = const [],
     this.recordings = const [],
     this.tags = const [],
     this.people = const [],
     this.photoscarouselItemList = const [],
     this.userprofile1ItemList = const [],
+    this.loaded = false,
   });
 
   List<Userprofile1ItemModel> userprofile1ItemList;
@@ -35,6 +36,7 @@ class MemoryModel extends Equatable {
   List<dynamic> recordings;
   List<Map<String, dynamic>> tags;
   List<Map<String, dynamic>> people;
+  bool loaded;
 
   MemoryModel copyWith({
     List<PhotoscarouselItemModel>? photoscarouselItemList,
@@ -49,6 +51,7 @@ class MemoryModel extends Equatable {
     List<dynamic>? recordings,
     List<Map<String, dynamic>>? tags,
     List<Map<String, dynamic>>? people,
+    bool? loaded,
   }) {
     print("Starting copyWith...");
     return MemoryModel(
@@ -65,6 +68,7 @@ class MemoryModel extends Equatable {
       recordings: recordings ?? this.recordings,
       tags: tags ?? this.tags,
       people: people ?? this.people,
+      loaded: loaded ?? this.loaded,
     );
   }
 

@@ -123,13 +123,10 @@ class _MapState extends State<MapWidget> {
           },
           child: ClipOval(
             child: Container(
-              padding: EdgeInsets.all(
-                  2), // Adjust this value to change the border width
-              color: Colors.white, // This is the border color
+              padding: EdgeInsets.all(2),
+              color: Colors.white,
               child: ClipOval(
-                child: Image.asset(thumbnail,
-                    fit: BoxFit
-                        .cover), // Replace this with the path to your image
+                child: Image.asset(thumbnail, fit: BoxFit.cover),
               ),
             ),
           ),

@@ -74,7 +74,8 @@ class MemoryBloc extends Bloc<MemoryEvent, MemoryState> {
             tags: memory['tags'],
             people: memory['people'],
             photoscarouselItemList: fillPhotoscarouselItemList(),
-            userprofile1ItemList: fillUserprofile1ItemList())));
+            userprofile1ItemList: fillUserprofile1ItemList(),
+            loaded: true)));
   }
 }
 

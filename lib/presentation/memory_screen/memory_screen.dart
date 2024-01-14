@@ -31,7 +31,8 @@ class MemoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocSelector<MemoryBloc, MemoryState, MemoryModel>(
         selector: (state) => state.memoryModelObj!,
-        builder: (context, memoryModel) {
+        builder: (context, memoryModelObj) {
+          if (memoryModelObj.loaded == false) return Container();
           return SafeArea(
               child: Scaffold(
                   appBar: _buildAppBar(context),
@@ -42,13 +43,13 @@ class MemoryScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                             CustomImageView(
-                                imagePath: ImageConstant.imgThumbnail,
+                                imagePath: memoryModelObj.thumbnail,
                                 height: 197.v,
                                 width: 360.h),
                             SizedBox(height: 18.v),
                             Padding(
                                 padding: EdgeInsets.only(left: 10.h),
-                                child: Text(memoryModel.title,
+                                child: Text(memoryModelObj.title,
                                     style: theme.textTheme.titleMedium)),
                             SizedBox(height: 2.v),
                             Container(
