@@ -1,3 +1,6 @@
+import 'package:anamnesis/presentation/about_screen/about_screen.dart';
+import 'package:anamnesis/presentation/people_screen/people_screen.dart';
+import 'package:anamnesis/presentation/settings_screen/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:anamnesis/presentation/home_map_screen/home_map_screen.dart';
 import 'package:anamnesis/presentation/memory_screen/memory_screen.dart';
@@ -36,6 +39,12 @@ class AppRoutes {
 
   static const String memoryPhotosPhotoScreen = '/memory_photos_photo_screen';
 
+  static const String settingsScreen = '/settings_screen';
+
+  static const String peopleScreen = '/people_screen';
+
+  static const String aboutScreen = '/about_screen';
+
   static const String appNavigationScreen = '/app_navigation_screen';
 
   static const String initialRoute = '/initialRoute';
@@ -52,6 +61,9 @@ class AppRoutes {
         memoryMapScreen: MemoryMapScreen.builder,
         memoryPhotosScreen: MemoryPhotosScreen.builder,
         memoryPhotosPhotoScreen: MemoryPhotosPhotoScreen.builder,
+        settingsScreen: SettingsScreen.builder,
+        peopleScreen: PeopleScreen.builder,
+        aboutScreen: AboutScreen.builder,
         appNavigationScreen: AppNavigationScreen.builder,
         initialRoute: HomeListScreen.builder
       };

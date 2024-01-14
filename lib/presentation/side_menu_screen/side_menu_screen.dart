@@ -44,11 +44,19 @@ Widget build(BuildContext context) {
                       style: theme.textTheme.bodyLarge),
                 ),
                 SizedBox(height: 36.v),
-                Text("lbl_people".tr, style: theme.textTheme.bodyLarge),
+                GestureDetector(
+                  onTap: () {
+                    NavigatorService.pushNamed(
+                      AppRoutes.peopleScreen,
+                    );
+                  },
+                  child:
+                      Text("lbl_people".tr, style: theme.textTheme.bodyLarge),
+                ),
                 SizedBox(height: 35.v),
                 GestureDetector(
                   onTap: () => showAddPeopleDialog(context),
-                  child: Text("+ Add new people".tr,
+                  child: Text("+ Add new person".tr,
                       style: theme.textTheme.bodyLarge),
                 ),
                 SizedBox(height: 35.v),
@@ -58,9 +66,25 @@ Widget build(BuildContext context) {
                       style: theme.textTheme.bodyLarge),
                 ),
                 SizedBox(height: 36.v),
-                Text("lbl_settings".tr, style: theme.textTheme.bodyLarge),
+                GestureDetector(
+                  onTap: () {
+                    NavigatorService.pushNamed(
+                      AppRoutes.settingsScreen,
+                    );
+                  },
+                  child:
+                      Text("lbl_settings".tr, style: theme.textTheme.bodyLarge),
+                ),
                 SizedBox(height: 35.v),
-                Text("lbl_about".tr, style: theme.textTheme.bodyLarge),
+                GestureDetector(
+                  onTap: () {
+                    NavigatorService.pushNamed(
+                      AppRoutes.aboutScreen,
+                    );
+                  },
+                  child:
+                      Text("lbl_about".tr, style: theme.textTheme.bodyLarge),
+                ),
                 SizedBox(height: 5.v),
                 Spacer(), // Pushes the following widgets to the bottom
 

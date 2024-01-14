@@ -21,9 +21,7 @@ class AppbarSubtitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        onTap!.call();
-      },
+      onTap: onTap != null ? () => onTap!.call() : null,
       child: Padding(
         padding: margin ?? EdgeInsets.zero,
         child: Text(
