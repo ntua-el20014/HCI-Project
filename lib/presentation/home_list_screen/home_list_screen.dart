@@ -33,7 +33,6 @@ final List<LabelItemModel> filters = [
   ),
 ];
 
-
 class HomeListScreen extends StatelessWidget {
   const HomeListScreen({Key? key}) : super(key: key);
 
@@ -101,7 +100,6 @@ class HomeListScreen extends StatelessWidget {
             ]));
   }
 
-  /// Section Widget
   /// Section Widget
   Widget _buildHomeList(BuildContext context) {
     return BlocSelector<HomeListBloc, HomeListState, HomeListModel?>(
