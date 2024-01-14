@@ -322,37 +322,37 @@ class DatabaseHelper {
     await db.insert('memory', {
       'title': 'These memories',
       'thumbnail': 'assets/images/img_periodikos_pinakas_134x121.png',
-      'start_date': DateTime.now(),
-      'end_date': DateTime.now(),
+      'start_date': DateTime.now().toString(),
+      'end_date': DateTime.now().toString(),
       'location': '0.0,0.0',
-      'user_trip': '',
+      'user_trip': '0.0,0.0',
       'track_location': 0,
     });
     await db.insert('memory', {
       'title': 'Are here',
       'thumbnail': 'assets/images/img_periodikos_pinakas_134x121.png',
-      'start_date': DateTime.now(),
-      'end_date': DateTime.now(),
+      'start_date': DateTime.now().toString(),
+      'end_date': DateTime.now().toString(),
       'location': '0.0,0.0',
-      'user_trip': '',
+      'user_trip': '0.0,0.0',
       'track_location': 0,
     });
     await db.insert('memory', {
       'title': 'To demonstrate',
       'thumbnail': 'assets/images/img_periodikos_pinakas_134x121.png',
-      'start_date': DateTime.now(),
-      'end_date': DateTime.now(),
+      'start_date': DateTime.now().toString(),
+      'end_date': DateTime.now().toString(),
       'location': '0.0,0.0',
-      'user_trip': '',
+      'user_trip': '0.0,0.0',
       'track_location': 0,
     });
     await db.insert('memory', {
       'title': 'The list view',
       'thumbnail': 'assets/images/img_periodikos_pinakas_134x121.png',
-      'start_date': DateTime.now(),
-      'end_date': DateTime.now(),
+      'start_date': DateTime.now().toString(),
+      'end_date': DateTime.now().toString(),
       'location': '0.0,0.0',
-      'user_trip': '',
+      'user_trip': '0.0,0.0',
       'track_location': 0,
     });
 
