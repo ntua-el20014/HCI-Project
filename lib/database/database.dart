@@ -92,71 +92,144 @@ class DatabaseHelper {
 
     // Insert into 'memory' table
     await db.insert('memory', {
-      'title': 'Memory 1',
+      'title': 'Chilling at NTUA',
       'thumbnail': 'assets/images/img_thumbnail.png',
       'start_date': DateTime.now().toString(),
       'end_date': DateTime.now().toString(),
-      'location': '38.5391242,21.9861981',
-      'user_trip':
-          '38.5391242,21.9861981;38.7391242,22.1861981;39.1391242,22.2861981',
+      'location': ' 37.9776001,23.7832768',
+      'user_trip': ' 37.9776001, 23.7832768; 37.8676001, 23.7732768',
       'track_location': 0,
     });
     await db.insert('memory', {
-      'title': 'Memory 2',
+      'title': 'Crete road trip',
       'thumbnail': 'assets/images/img_thumbnail_56x56.png',
-      'start_date': DateTime.now().toString(),
-      'end_date': DateTime.now().toString(),
+      'start_date': DateTime.now().subtract(Duration(days: 30)).toString(),
+      'end_date': DateTime.now().subtract(Duration(days: 22)).toString(),
       'location': '35.3775752,24.5683288',
       'user_trip':
           '35.3775752,24.5683288;36.3775752,24.7683288;37.3775752,23.5683288;36.7775752,24.5683288',
+      'track_location': 0,
+    });
+    await db.insert('memory', {
+      'title': 'Trekking in Oiti',
+      'thumbnail': 'assets/images/img_img_20231007_141500_230x360.png',
+      'start_date': DateTime.now().subtract(Duration(days: 4)).toString(),
+      'end_date': DateTime.now().subtract(Duration(days: 2)).toString(),
+      'location': '38.5391242,21.9861981',
+      'user_trip':
+          '38.5391242,21.9861981;38.7391242,22.1861981;39.1391242,22.2861981',
       'track_location': 0,
     });
 
     // Insert into 'memory_images' table
     await db.insert('memory_images', {
       'memory_id': 1,
-      'image_path': 'path/to/image1',
-    });
-    await db.insert('memory_images', {
-      'memory_id': 1,
-      'image_path': 'path/to/image2',
+      'image_path': 'assets/images/dummy1.png',
     });
     await db.insert('memory_images', {
       'memory_id': 2,
-      'image_path': 'path/to/image3',
+      'image_path': 'assets/images/dummy2.png',
+    });
+    await db.insert('memory_images', {
+      'memory_id': 3,
+      'image_path': 'assets/images/dummy3.png',
+    });
+    await db.insert('memory_images', {
+      'memory_id': 2,
+      'image_path': 'assets/images/dummy4.png',
+    });
+    await db.insert('memory_images', {
+      'memory_id': 2,
+      'image_path': 'assets/images/dummy5.png',
+    });
+    await db.insert('memory_images', {
+      'memory_id': 1,
+      'image_path': 'assets/images/dummy6.png',
+    });
+    await db.insert('memory_images', {
+      'memory_id': 3,
+      'image_path': 'assets/images/dummy7.png',
+    });
+    await db.insert('memory_images', {
+      'memory_id': 3,
+      'image_path': 'assets/images/dummy8.png',
+    });
+    await db.insert('memory_images', {
+      'memory_id': 3,
+      'image_path': 'assets/images/dummy9.png',
+    });
+    await db.insert('memory_images', {
+      'memory_id': 2,
+      'image_path': 'assets/images/dummy10.png',
+    });
+    await db.insert('memory_images', {
+      'memory_id': 1,
+      'image_path': 'assets/images/img_thumbnail_1.png',
+    });
+    await db.insert('memory_images', {
+      'memory_id': 3,
+      'image_path':
+          'assets/images/img_mikrh_mprostinh_stampa_omada_134x119.png',
     });
 
     // Insert into 'memory_journal' table
     await db.insert('memory_journal', {
       'memory_id': 1,
       'page_date': DateTime.now().toString(),
-      'page_text': 'Journal entry 1',
+      'page_text':
+          'We had quite the time at NTUA. We set up our hammocks and... started studyng!',
     });
     await db.insert('memory_journal', {
       'memory_id': 1,
       'page_date': DateTime.now().toString(),
-      'page_text': 'Journal entry 2',
+      'page_text':
+          'Honestly, I don\'t know if the Journal is worth the implementation effort.',
     });
 
     // Insert into 'memory_recordings' table
     await db.insert('memory_recordings', {
       'memory_id': 1,
-      'rec_path': 'path/to/recording1',
+      'rec_path': 'assets/recordings/ring.mp3',
+    });
+    await db.insert('memory_recordings', {
+      'memory_id': 1,
+      'rec_path': 'assets/recordings/dragon.mp3',
+    });
+    await db.insert('memory_recordings', {
+      'memory_id': 1,
+      'rec_path': 'assets/recordings/work.mp3',
+    });
+    await db.insert('memory_recordings', {
+      'memory_id': 1,
+      'rec_path': 'assets/recordings/shallnotpass.mp3',
+    });
+    await db.insert('memory_recordings', {
+      'memory_id': 2,
+      'rec_path': 'assets/recordings/myprecious.mp3',
+    });
+    await db.insert('memory_recordings', {
+      'memory_id': 2,
+      'rec_path': 'assets/recordings/end.mp3',
     });
 
     // Insert into 'tag' table
     await db.insert('tag', {
-      'label': 'Tag 1',
+      'label': 'Summer',
     });
     await db.insert('tag', {
-      'label': 'Tag 2',
+      'label': 'NTUA',
+    });
+    await db.insert('tag', {
+      'label': 'Beers with the boys',
+    });
+    await db.insert('tag', {
+      'label': 'Road trip',
+    });
+    await db.insert('tag', {
+      'label': 'Outdoors',
     });
 
     // Insert into 'memory_tags' table
-    await db.insert('memory_tags', {
-      'memory_id': 1,
-      'tag_id': 1,
-    });
     await db.insert('memory_tags', {
       'memory_id': 1,
       'tag_id': 2,
@@ -164,6 +237,22 @@ class DatabaseHelper {
     await db.insert('memory_tags', {
       'memory_id': 2,
       'tag_id': 1,
+    });
+    await db.insert('memory_tags', {
+      'memory_id': 2,
+      'tag_id': 3,
+    });
+    await db.insert('memory_tags', {
+      'memory_id': 2,
+      'tag_id': 4,
+    });
+    await db.insert('memory_tags', {
+      'memory_id': 3,
+      'tag_id': 3,
+    });
+    await db.insert('memory_tags', {
+      'memory_id': 3,
+      'tag_id': 5,
     });
 
     // Insert into 'person' table
@@ -190,16 +279,28 @@ class DatabaseHelper {
       'person_id': 2,
     });
     await db.insert('memory_people', {
-      'memory_id': 1,
-      'person_id': 3,
+      'memory_id': 2,
+      'person_id': 2,
     });
     await db.insert('memory_people', {
       'memory_id': 2,
+      'person_id': 4,
+    });
+    await db.insert('memory_people', {
+      'memory_id': 3,
       'person_id': 1,
     });
     await db.insert('memory_people', {
-      'memory_id': 2,
+      'memory_id': 3,
+      'person_id': 2,
+    });
+    await db.insert('memory_people', {
+      'memory_id': 3,
       'person_id': 3,
+    });
+    await db.insert('memory_people', {
+      'memory_id': 3,
+      'person_id': 4,
     });
     print("Initial data inserted");
   }
