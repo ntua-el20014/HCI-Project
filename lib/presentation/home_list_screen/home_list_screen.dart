@@ -8,9 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
 import 'package:anamnesis/widgets/custom_floating_button.dart';
 import 'package:anamnesis/widgets/custom_search_view.dart';
-//import 'package:anamnesis/widgets/custom_text_form_field.dart';
 import 'models/label_item_model.dart';
-//import 'widgets/label_widget.dart';
 
 final List<LabelItemModel> filters = [
   LabelItemModel(
@@ -183,7 +181,6 @@ Widget _buildLabelCarousel(BuildContext context, List<LabelItemModel> filters) {
     labels: filters,
     carouselType: CarouselType.FilterEditor,
     onLabelTap: (selectedFilter) {
-      // Handle selected filter in the filter editor context
       print('Selected Filter: ${selectedFilter.label}');
       // You can add more logic here based on the selected filter
     },

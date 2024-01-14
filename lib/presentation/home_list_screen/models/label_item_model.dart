@@ -10,7 +10,6 @@ class LabelItemModel {
     iconPath = iconPath ?? "";
     value = value ?? "";
   }
-
   String? label;
   String? iconPath;
   String? value;
