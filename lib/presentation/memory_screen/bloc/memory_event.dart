@@ -11,6 +11,10 @@ abstract class MemoryEvent extends Equatable {}
 
 /// Event that is dispatched when the Memory widget is first created.
 class MemoryInitialEvent extends MemoryEvent {
+  final int memId;
+
+  MemoryInitialEvent(this.memId);
+
   @override
   List<Object?> get props => [];
 }

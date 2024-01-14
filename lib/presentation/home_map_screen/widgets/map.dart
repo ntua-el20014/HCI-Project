@@ -1,9 +1,10 @@
+import 'package:anamnesis/core/utils/navigator_service.dart';
+import 'package:anamnesis/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:anamnesis/database/database.dart';
-import 'package:anamnesis/presentation/memory_screen/memory_screen.dart';
 
 class MapWidget extends StatefulWidget {
   const MapWidget({Key? key}) : super(key: key);
@@ -115,11 +116,9 @@ class _MapState extends State<MapWidget> {
         child: GestureDetector(
           onTap: () {
             // Navigate to memory screen, normally passing the memory id as an argument
-            print(memId);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MemoryScreen.builder(context)),
+            NavigatorService.pushNamed(
+              AppRoutes.memoryScreen,
+              arguments: memId,
             );
           },
           child: ClipOval(

@@ -114,9 +114,12 @@ class HomeListScreen extends StatelessWidget {
                     HomelistItemModel();
             return Column(
               children: [
-                HomelistItemWidget(model, onTapListItemListItem: () {
-                  onTapListItemListItem(context);
-                }),
+                HomelistItemWidget(
+                  model,
+                  // onTapListItemListItem: () {
+                  //   onTapListItemListItem(context);
+                  // },
+                ),
                 SizedBox(height: 2.v),
               ],
             );
@@ -146,7 +149,7 @@ class HomeListScreen extends StatelessWidget {
   }
 
   /// Navigates to the memoryScreen when the action is triggered.
-  onTapListItemListItem(BuildContext context) {
+  onTapListItemListItem(BuildContext context, int memId) {
     NavigatorService.pushNamed(
       AppRoutes.memoryScreen,
     );

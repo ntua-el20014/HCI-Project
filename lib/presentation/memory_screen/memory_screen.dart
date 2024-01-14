@@ -14,97 +14,105 @@ import 'package:anamnesis/widgets/custom_elevated_button.dart';
 import 'package:anamnesis/widgets/custom_switch.dart';
 
 class MemoryScreen extends StatelessWidget {
-  const MemoryScreen({Key? key}) : super(key: key);
+  final int memId;
+
+  const MemoryScreen({Key? key, required this.memId}) : super(key: key);
 
   static Widget builder(BuildContext context) {
+    final memId = ModalRoute.of(context)?.settings.arguments as int;
     return BlocProvider<MemoryBloc>(
-        create: (context) =>
-            MemoryBloc(MemoryState(memoryModelObj: MemoryModel()))
-              ..add(MemoryInitialEvent()),
-        child: MemoryScreen());
+        create: (context) => MemoryBloc(
+            memId, MemoryState(memoryModelObj: MemoryModel(id: memId)))
+          ..add(MemoryInitialEvent(memId)),
+        child: MemoryScreen(memId: memId));
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-            appBar: _buildAppBar(context),
-            body: SizedBox(
-                width: SizeUtils.width,
-                child: SingleChildScrollView(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      CustomImageView(
-                          imagePath: ImageConstant.imgThumbnail,
-                          height: 197.v,
-                          width: 360.h),
-                      SizedBox(height: 18.v),
-                      Padding(
-                          padding: EdgeInsets.only(left: 10.h),
-                          child: Text("lbl_memory_title".tr,
-                              style: theme.textTheme.titleMedium)),
-                      SizedBox(height: 2.v),
-                      Container(
-                          width: 215.h,
-                          margin: EdgeInsets.only(left: 10.h),
-                          child: Text("msg_start_date_dd_mm_yyyy".tr,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.bodyMedium!
-                                  .copyWith(height: 1.43))),
-                      SizedBox(height: 16.v),
-                      Padding(
-                          padding: EdgeInsets.only(left: 10.h),
-                          child: Text("lbl_people".tr,
-                              style: theme.textTheme.titleMedium)),
-                      SizedBox(height: 4.v),
-                      Padding(
-                          padding: EdgeInsets.only(left: 10.h),
-                          child: Text("msg_person_1_person".tr,
-                              style: theme.textTheme.bodyMedium)),
-                      SizedBox(height: 18.v),
-                      Padding(
-                          padding: EdgeInsets.only(left: 10.h),
-                          child: Row(children: [
-                            CustomElevatedButton(
-                                width: 64.h, text: "lbl_ntua".tr),
-                            CustomElevatedButton(
-                                width: 139.h,
-                                text: "msg_beers_with_the_boys".tr,
-                                margin: EdgeInsets.only(left: 22.h))
-                          ])),
-                      SizedBox(height: 18.v),
-                      _buildPhotos(context),
-                      _buildPhotosCarousel(context),
-                      SizedBox(height: 17.v),
-                      Padding(
-                          padding: EdgeInsets.only(left: 10.h),
-                          child: Text("lbl_your_journey".tr,
-                              style: CustomTextStyles.titleLargeBold)),
-                      Padding(
-                          padding: EdgeInsets.only(left: 10.h),
-                          child: Text("msg_total_distance".tr,
-                              style: CustomTextStyles.bodyLargeGray800_2)),
-                      SizedBox(height: 16.v),
-                      _buildTrackSwitch(context),
-                      SizedBox(height: 15.v),
-                      CustomImageView(
-                          imagePath: ImageConstant.imgMap,
-                          height: 163.v,
-                          width: 240.h,
-                          radius: BorderRadius.circular(19.h),
-                          alignment: Alignment.center,
-                          onTap: () {
-                            onTapImgMap(context);
-                          }),
-                      SizedBox(height: 15.v),
-                      _buildJournal(context),
-                      _buildJournalCarousel(context),
-                      SizedBox(height: 15.v),
-                      _buildRecordings(context),
-                      _buildUserProfile(context)
-                    ])))));
+    return BlocSelector<MemoryBloc, MemoryState, MemoryModel>(
+        selector: (state) => state.memoryModelObj!,
+        builder: (context, memoryModel) {
+          return SafeArea(
+              child: Scaffold(
+                  appBar: _buildAppBar(context),
+                  body: SizedBox(
+                      width: SizeUtils.width,
+                      child: SingleChildScrollView(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                            CustomImageView(
+                                imagePath: ImageConstant.imgThumbnail,
+                                height: 197.v,
+                                width: 360.h),
+                            SizedBox(height: 18.v),
+                            Padding(
+                                padding: EdgeInsets.only(left: 10.h),
+                                child: Text(memoryModel.title,
+                                    style: theme.textTheme.titleMedium)),
+                            SizedBox(height: 2.v),
+                            Container(
+                                width: 215.h,
+                                margin: EdgeInsets.only(left: 10.h),
+                                child: Text("msg_start_date_dd_mm_yyyy".tr,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: theme.textTheme.bodyMedium!
+                                        .copyWith(height: 1.43))),
+                            SizedBox(height: 16.v),
+                            Padding(
+                                padding: EdgeInsets.only(left: 10.h),
+                                child: Text("lbl_people".tr,
+                                    style: theme.textTheme.titleMedium)),
+                            SizedBox(height: 4.v),
+                            Padding(
+                                padding: EdgeInsets.only(left: 10.h),
+                                child: Text("msg_person_1_person".tr,
+                                    style: theme.textTheme.bodyMedium)),
+                            SizedBox(height: 18.v),
+                            Padding(
+                                padding: EdgeInsets.only(left: 10.h),
+                                child: Row(children: [
+                                  CustomElevatedButton(
+                                      width: 64.h, text: "lbl_ntua".tr),
+                                  CustomElevatedButton(
+                                      width: 139.h,
+                                      text: "msg_beers_with_the_boys".tr,
+                                      margin: EdgeInsets.only(left: 22.h))
+                                ])),
+                            SizedBox(height: 18.v),
+                            _buildPhotos(context),
+                            _buildPhotosCarousel(context),
+                            SizedBox(height: 17.v),
+                            Padding(
+                                padding: EdgeInsets.only(left: 10.h),
+                                child: Text("lbl_your_journey".tr,
+                                    style: CustomTextStyles.titleLargeBold)),
+                            Padding(
+                                padding: EdgeInsets.only(left: 10.h),
+                                child: Text("msg_total_distance".tr,
+                                    style:
+                                        CustomTextStyles.bodyLargeGray800_2)),
+                            SizedBox(height: 16.v),
+                            _buildTrackSwitch(context),
+                            SizedBox(height: 15.v),
+                            CustomImageView(
+                                imagePath: ImageConstant.imgMap,
+                                height: 163.v,
+                                width: 240.h,
+                                radius: BorderRadius.circular(19.h),
+                                alignment: Alignment.center,
+                                onTap: () {
+                                  onTapImgMap(context);
+                                }),
+                            SizedBox(height: 15.v),
+                            _buildJournal(context),
+                            _buildJournalCarousel(context),
+                            SizedBox(height: 15.v),
+                            _buildRecordings(context),
+                            _buildUserProfile(context)
+                          ])))));
+        });
   }
 
   /// Section Widget

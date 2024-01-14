@@ -169,22 +169,20 @@ class DatabaseHelper {
     memory['recordings'] = recordingMaps.map((map) => map['rec_path']).toList();
 
     // Get tags for this memory
-    final List<Map<String, dynamic>> tagMaps = await db.query(
-      'memory_tags',
-      columns: ['tag_id'],
-      where: 'memory_id = ?',
-      whereArgs: [id],
-    );
-    memory['tags'] = tagMaps.map((map) => map['tag_id']).toList();
+    final List<Map<String, dynamic>> tagMaps = await db.rawQuery('''
+      SELECT tag.id, tag.label
+      FROM tag JOIN memory_tags ON tag.id = memory_tags.tag_id
+      WHERE memory_tags.memory_id = ${id}
+    ''');
+    memory['tags'] = tagMaps;
 
     // Get people for this memory
-    final List<Map<String, dynamic>> personMaps = await db.query(
-      'memory_people',
-      columns: ['person_id'],
-      where: 'memory_id = ?',
-      whereArgs: [id],
-    );
-    memory['people'] = personMaps.map((map) => map['person_id']).toList();
+    final List<Map<String, dynamic>> personMaps = await db.rawQuery('''
+      SELECT person.id, person.name
+      FROM person JOIN memory_people ON person.id = memory_people.person_id
+      WHERE memory_people.memory_id = ${id}
+    ''');
+    memory['people'] = personMaps;
 
     return memory;
   }
@@ -324,8 +322,8 @@ class DatabaseHelper {
       'thumbnail': 'assets/images/img_periodikos_pinakas_134x121.png',
       'start_date': DateTime.now().toString(),
       'end_date': DateTime.now().toString(),
-      'location': '0.0,0.0',
-      'user_trip': '0.0,0.0',
+      'location': '40.6583261, 22.9413016',
+      'user_trip': '40.6583261, 22.9413016',
       'track_location': 0,
     });
     await db.insert('memory', {
@@ -342,8 +340,8 @@ class DatabaseHelper {
       'thumbnail': 'assets/images/img_periodikos_pinakas_134x121.png',
       'start_date': DateTime.now().toString(),
       'end_date': DateTime.now().toString(),
-      'location': '0.0,0.0',
-      'user_trip': '0.0,0.0',
+      'location': '41.8603732, 12.5000386',
+      'user_trip': '41.8603732, 12.5000386',
       'track_location': 0,
     });
     await db.insert('memory', {
@@ -351,8 +349,8 @@ class DatabaseHelper {
       'thumbnail': 'assets/images/img_periodikos_pinakas_134x121.png',
       'start_date': DateTime.now().toString(),
       'end_date': DateTime.now().toString(),
-      'location': '0.0,0.0',
-      'user_trip': '0.0,0.0',
+      'location': '38.1728,23.7572',
+      'user_trip': '38.1728,23.7572',
       'track_location': 0,
     });
 

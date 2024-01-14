@@ -22,11 +22,11 @@ class HomeListBloc extends Bloc<HomeListEvent, HomeListState> {
     for (int i = 0; i < memories.length; i++) {
       String dateOnly =
           "${memories[i]['start_date'].day}/${memories[i]['start_date'].month}/${memories[i]['start_date'].year}";
-      print("date: $dateOnly");
       String placemark =
           await _getPlacemarkFromCoordinates(memories[i]['location']);
 
       homeList.add(HomelistItemModel(
+        id: memories[i]['id'],
         date: memories[i]['thumbnail'],
         overlineText: dateOnly,
         headlineText: memories[i]['title'],

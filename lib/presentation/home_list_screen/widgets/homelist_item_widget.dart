@@ -21,7 +21,11 @@ class HomelistItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        onTapListItemListItem!.call();
+        // onTapListItemListItem!.call();
+        NavigatorService.pushNamed(
+          AppRoutes.memoryScreen,
+          arguments: homelistItemModelObj.id,
+        );
       },
       child: Container(
         width: double.maxFinite,
@@ -87,4 +91,3 @@ class HomelistItemWidget extends StatelessWidget {
     );
   }
 }
-

@@ -14,7 +14,7 @@ class HomelistItemModel {
     headlineText = headlineText ?? "Memory Title";
     supportingText = supportingText ??
         "Supporting line text lorem ipsum dolor sit amet, consectetur.";
-    id = id ?? "";
+    id = id ?? 1;
   }
 
   String? date;
@@ -25,5 +25,5 @@ class HomelistItemModel {
 
   String? supportingText;
 
-  String? id;
+  int? id;
 }
