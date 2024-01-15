@@ -1,7 +1,7 @@
-import '../memory_screen/widgets/userprofile1_item_widget.dart';
+import 'package:anamnesis/presentation/memory_screen/widgets/audio_player_widget.dart';
+
 import 'bloc/memory_bloc.dart';
 import 'models/memory_model.dart';
-import 'models/userprofile1_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_leading_image.dart';
@@ -34,76 +34,79 @@ class MemoryScreen extends StatelessWidget {
               color: Colors.white,
             );
           return SafeArea(
-              child: Scaffold(
-                  appBar: _buildAppBar(context, memoryModelObj),
-                  body: SizedBox(
-                      width: SizeUtils.width,
-                      child: SingleChildScrollView(
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                            CustomImageView(
-                                imagePath: memoryModelObj.thumbnail,
-                                height: 197.v,
-                                width: 360.h),
-                            SizedBox(height: 18.v),
-                            Padding(
-                                padding: EdgeInsets.only(left: 10.h),
-                                child: Text(memoryModelObj.title,
-                                    style: theme.textTheme.titleMedium)),
-                            SizedBox(height: 2.v),
-                            Container(
-                                width: 215.h,
-                                margin: EdgeInsets.only(left: 10.h),
-                                child: Text(
-                                    "${memoryModelObj.start_date}  to ${memoryModelObj.start_date},\n 📍${memoryModelObj.location}",
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: theme.textTheme.bodyMedium!
-                                        .copyWith(height: 1.43))),
-                            SizedBox(height: 16.v),
-                            Padding(
-                                padding: EdgeInsets.only(left: 10.h),
-                                child: Text("People",
-                                    style: theme.textTheme.titleMedium)),
-                            SizedBox(height: 4.v),
-                            Padding(
-                                padding: EdgeInsets.only(left: 10.h),
-                                child: Text(_getPeople(memoryModelObj),
-                                    style: theme.textTheme.bodyMedium)),
-                            SizedBox(height: 18.v),
-                            _buildTags(context, memoryModelObj),
-                            SizedBox(height: 18.v),
-                            _buildPhotos(context),
-                            SizedBox(height: 17.v),
-                            Padding(
-                                padding: EdgeInsets.only(left: 10.h),
-                                child: Text("lbl_your_journey".tr,
-                                    style: CustomTextStyles.titleLargeBold)),
-                            Padding(
-                                padding: EdgeInsets.only(left: 10.h),
-                                child: Text("msg_total_distance".tr,
-                                    style:
-                                        CustomTextStyles.bodyLargeGray800_2)),
-                            SizedBox(height: 16.v),
-                            _buildTrackSwitch(context),
-                            SizedBox(height: 15.v),
-                            CustomImageView(
-                                imagePath: ImageConstant.imgMap,
-                                height: 163.v,
-                                width: 240.h,
-                                radius: BorderRadius.circular(19.h),
-                                alignment: Alignment.center,
-                                onTap: () {
-                                  onTapImgMap(context);
-                                }),
-                            SizedBox(height: 15.v),
-                            _buildJournal(context),
-                            _buildJournalCarousel(context),
-                            SizedBox(height: 15.v),
-                            _buildRecordings(context),
-                            _buildUserProfile(context)
-                          ])))));
+            child: Scaffold(
+              appBar: _buildAppBar(context, memoryModelObj),
+              body: SizedBox(
+                width: SizeUtils.width,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomImageView(
+                          imagePath: memoryModelObj.thumbnail,
+                          height: 197.v,
+                          width: 360.h),
+                      SizedBox(height: 18.v),
+                      Padding(
+                          padding: EdgeInsets.only(left: 10.h),
+                          child: Text(memoryModelObj.title,
+                              style: theme.textTheme.titleMedium)),
+                      SizedBox(height: 2.v),
+                      Container(
+                          width: 215.h,
+                          margin: EdgeInsets.only(left: 10.h),
+                          child: Text(
+                              "${memoryModelObj.start_date}  to ${memoryModelObj.start_date},\n 📍${memoryModelObj.location}",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodyMedium!
+                                  .copyWith(height: 1.43))),
+                      SizedBox(height: 16.v),
+                      Padding(
+                          padding: EdgeInsets.only(left: 10.h),
+                          child: Text("People",
+                              style: theme.textTheme.titleMedium)),
+                      SizedBox(height: 4.v),
+                      Padding(
+                          padding: EdgeInsets.only(left: 10.h),
+                          child: Text(_getPeople(memoryModelObj),
+                              style: theme.textTheme.bodyMedium)),
+                      SizedBox(height: 18.v),
+                      _buildTags(context, memoryModelObj),
+                      SizedBox(height: 18.v),
+                      _buildPhotos(context),
+                      SizedBox(height: 17.v),
+                      Padding(
+                          padding: EdgeInsets.only(left: 10.h),
+                          child: Text("lbl_your_journey".tr,
+                              style: CustomTextStyles.titleLargeBold)),
+                      Padding(
+                          padding: EdgeInsets.only(left: 10.h),
+                          child: Text("msg_total_distance".tr,
+                              style: CustomTextStyles.bodyLargeGray800_2)),
+                      SizedBox(height: 16.v),
+                      _buildTrackSwitch(context),
+                      SizedBox(height: 15.v),
+                      CustomImageView(
+                          imagePath: ImageConstant.imgMap,
+                          height: 163.v,
+                          width: 240.h,
+                          radius: BorderRadius.circular(19.h),
+                          alignment: Alignment.center,
+                          onTap: () {
+                            onTapImgMap(context);
+                          }),
+                      SizedBox(height: 15.v),
+                      _buildJournal(context),
+                      _buildJournalCarousel(context),
+                      SizedBox(height: 15.v),
+                      _buildRecordings(context),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
         });
   }
 
@@ -266,34 +269,39 @@ class MemoryScreen extends StatelessWidget {
 
   /// Section Widget
   Widget _buildRecordings(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 9.v),
-        decoration: AppDecoration.fillWhiteA,
-        child: Column(children: [
-          SizedBox(height: 7.v),
-          Text("lbl_recordings".tr, style: CustomTextStyles.titleLargeBold)
-        ]));
-  }
-
-  /// Section Widget
-  Widget _buildUserProfile(BuildContext context) {
-    return BlocSelector<MemoryBloc, MemoryState, MemoryModel?>(
-        selector: (state) => state.memoryModelObj,
-        builder: (context, memoryModelObj) {
-          return ListView.separated(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              separatorBuilder: (context, index) {
-                return SizedBox(height: 1.v);
-              },
-              itemCount: memoryModelObj?.userprofile1ItemList.length ?? 0,
-              itemBuilder: (context, index) {
-                Userprofile1ItemModel model =
-                    memoryModelObj?.userprofile1ItemList[index] ??
-                        Userprofile1ItemModel();
-                return Userprofile1ItemWidget(model);
-              });
-        });
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.only(left: 16.h, bottom: 9.v),
+              decoration: AppDecoration.fillWhiteA,
+              child: Text("Recordings", style: CustomTextStyles.titleLargeBold),
+            ),
+          ],
+        ),
+        BlocSelector<MemoryBloc, MemoryState, MemoryModel?>(
+            selector: (state) => state.memoryModelObj,
+            builder: (context, memoryModelObj) {
+              if (memoryModelObj?.recordings.length == 0) {
+                return Center(child: Text("This memory has no recordings"));
+              }
+              return ListView.separated(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: memoryModelObj?.recordings.length ?? 0,
+                separatorBuilder: ((context, index) {
+                  return SizedBox(height: 2.v);
+                }),
+                itemBuilder: (context, index) {
+                  return AudioPlayerWidget(
+                    audioPath: memoryModelObj?.recordings[index],
+                  );
+                },
+              );
+            })
+      ],
+    );
   }
 
   /// Navigates to the memoryMapScreen when the action is triggered.

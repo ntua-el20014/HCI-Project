@@ -26,6 +26,7 @@ dependencies:
   path: ^1.8.1
   geocoding: ^2.1.1
   volume_controller: ^2.0.7
+  audioplayers: ^5.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -34,6 +35,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/recordings/
   fonts:
     - family: Roboto
       fonts:

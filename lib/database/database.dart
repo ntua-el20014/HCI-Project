@@ -422,27 +422,27 @@ class DatabaseHelper {
     // Insert into 'memory_recordings' table
     await db.insert('memory_recordings', {
       'memory_id': 1,
-      'rec_path': 'assets/recordings/ring.mp3',
+      'rec_path': 'recordings/ring.mp3',
     });
     await db.insert('memory_recordings', {
       'memory_id': 1,
-      'rec_path': 'assets/recordings/dragon.mp3',
+      'rec_path': 'recordings/dragon.mp3',
     });
     await db.insert('memory_recordings', {
       'memory_id': 1,
-      'rec_path': 'assets/recordings/work.mp3',
+      'rec_path': 'recordings/work.mp3',
     });
     await db.insert('memory_recordings', {
       'memory_id': 1,
-      'rec_path': 'assets/recordings/shallnotpass.mp3',
+      'rec_path': 'recordings/shallnotpass.mp3',
     });
     await db.insert('memory_recordings', {
       'memory_id': 2,
-      'rec_path': 'assets/recordings/myprecious.mp3',
+      'rec_path': 'recordings/myprecious.mp3',
     });
     await db.insert('memory_recordings', {
       'memory_id': 2,
-      'rec_path': 'assets/recordings/end.mp3',
+      'rec_path': 'recordings/end.mp3',
     });
 
     // Insert into 'tag' table
