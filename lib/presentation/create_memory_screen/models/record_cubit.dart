@@ -23,10 +23,10 @@ class RecordCubit extends Cubit<mem.RecordState> {
         permissions[Permission.manageExternalStorage]!.isGranted;
 
     if (permissionsGranted) {
-      Directory appFolder =
-          await pathProvider.getApplicationDocumentsDirectory();
+      Directory? appFolder = await pathProvider.getDownloadsDirectory();
+      print(appFolder?.path);
       bool appFolderExists =
-          await Directory(appFolder.path + '/recording').exists();
+          await Directory(appFolder!.path + '/recording').exists();
       if (!appFolderExists) {
         final created = await Directory(appFolder.path + '/recording')
             .create(recursive: true);
@@ -49,10 +49,11 @@ class RecordCubit extends Cubit<mem.RecordState> {
     }
   }
 
-  void stopRecording() async {
+  Future<String?> stopRecording() async {
     String? path = await _audioRecorder.stop();
     emit(mem.RecordStopped());
     print('Output path $path');
+    return path;
   }
 
   Stream<double> aplitudeStream() async* {

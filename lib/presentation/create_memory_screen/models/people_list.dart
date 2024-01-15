@@ -18,14 +18,15 @@ class PeopleItemModel {
 
 class PeopleList extends StatefulWidget {
   final List<PeopleItemModel> people;
+  final ValueChanged<List<PeopleItemModel>> onSelectionChanged;
 
-  PeopleList({required this.people});
-
+  PeopleList({required this.people, required this.onSelectionChanged});
   @override
   _PeopleListState createState() => _PeopleListState();
 }
 
 class _PeopleListState extends State<PeopleList> {
+  List<PeopleItemModel> selectedPeople = [];
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -37,6 +38,13 @@ class _PeopleListState extends State<PeopleList> {
               onTap: () {
                 setState(() {
                   person.isSelected = !person.isSelected!;
+
+                  if (person.isSelected!) {
+                    selectedPeople.add(person);
+                  } else {
+                    selectedPeople.remove(person);
+                  }
+                  widget.onSelectionChanged(selectedPeople);
                 });
               },
               child: Container(

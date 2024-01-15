@@ -9,6 +9,15 @@ class ImageCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (imgList.isEmpty) {
+      // Display a placeholder image when imgList is empty
+      return Container(
+        width: 100,
+        height: 100,
+        child: _buildImage('assets/images/image_not_found.png'),
+      );
+    }
+
     return CarouselSlider(
       options: CarouselOptions(
         aspectRatio: 2.5, // Adjust the aspect ratio

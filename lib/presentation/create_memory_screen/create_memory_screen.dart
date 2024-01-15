@@ -1,8 +1,11 @@
 import 'package:anamnesis/database/database.dart';
+import 'package:anamnesis/presentation/create_memory_screen/models/audio_player_controller.dart';
 import 'package:anamnesis/presentation/create_memory_screen/models/audio_visualizer.dart';
 import 'package:anamnesis/presentation/create_memory_screen/models/record_cubit.dart';
 import 'package:anamnesis/presentation/create_memory_screen/models/record_stat.dart'
     as mem;
+import 'package:path_provider/path_provider.dart' as pathProvider;
+import 'package:anamnesis/presentation/memory_screen/widgets/audio_player_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:anamnesis/presentation/home_list_screen/models/tag_carousel_model.dart';
 import 'bloc/create_memory_bloc.dart';
@@ -17,7 +20,6 @@ import 'package:anamnesis/widgets/custom_elevated_button.dart';
 import 'package:anamnesis/widgets/custom_floating_text_field.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'models/people_list.dart';
 import '../home_list_screen/models/label_item_model.dart';
 import '../create_memory_screen/models/image_carousel.dart';
@@ -41,6 +43,11 @@ class CreateMemoryScreen extends StatefulWidget {
 }
 
 class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
+  List<String> recordingPaths = [];
+  List<String> imgList = [];
+  List<String> journalList = [];
+  List<PeopleItemModel> mySelectedPeople = [];
+  AudioPlayerController audioPlayerController = AudioPlayerController();
 
   Future<Map<String, dynamic>> _getFutureData() async {
     print("Getting future data...");
@@ -75,7 +82,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
   }
 
   @override
-Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return SafeArea(
       child: FutureBuilder<Map<String, dynamic>>(
           future: _getFutureData(),
@@ -91,30 +98,30 @@ Widget build(BuildContext context) {
             Map<String, dynamic> data =
                 snapshot.data ?? {"tags": [], "people": []};
             print("Data: ${data['people']}");
-                return Scaffold(
-                  resizeToAvoidBottomInset: false,
-                  appBar: _buildAppBar(context),
-                  body: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 10.v),
-                        _buildTitle1(context),
-                        SizedBox(height: 15.v),
-                        _buildInputDatePicker(context),
-                        SizedBox(height: 20.v),
-                        _buildLocation(context),
-                        SizedBox(height: 20.v),
-                        _buildAddPeople(context, data["people"]),
-                        SizedBox(height: 30.v),
-                        _buildSelectTags(context, data["tags"]),
-                        SizedBox(height: 30.v),
-                        _buildPhotos(context),
-                        SizedBox(height: 30.v),
-                        _buildJournals(context),
-                        SizedBox(height: 30.v),
-                        _buildRecordings(context),
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: _buildAppBar(context),
+              body: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10.v),
+                    _buildTitle1(context),
+                    SizedBox(height: 15.v),
+                    _buildInputDatePicker(context),
+                    SizedBox(height: 20.v),
+                    _buildLocation(context),
+                    SizedBox(height: 20.v),
+                    _buildAddPeople(context, data["people"]),
+                    SizedBox(height: 30.v),
+                    _buildSelectTags(context, data["tags"]),
+                    SizedBox(height: 30.v),
+                    _buildPhotos(context),
+                    SizedBox(height: 30.v),
+                    _buildJournals(context),
+                    SizedBox(height: 30.v),
+                    _buildRecordings(context),
                   ],
                 ),
               ),
@@ -425,14 +432,20 @@ Widget build(BuildContext context) {
             ),
           ),
           SizedBox(height: 13.v),
-          PeopleList(people: people),
+          PeopleList(
+            people: people,
+            onSelectionChanged: (selectedPeople) {
+              mySelectedPeople = selectedPeople;
+              print(selectedPeople.map((person) => person.name!).toList());
+            },
+          ),
         ],
       ),
     );
   }
 
   /// Section Widget
-Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
+  Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -462,15 +475,16 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
       selectedLabels: selectedTags, // Pass the selected tags to TagCarousel
       carouselType: CarouselType.TagPicker,
       onLabelTap: (selectedLabel) {
-        // Update the selected tags list
         if (!selectedLabel.isSelected) {
           print('Deselected Tag: ${selectedLabel.label}');
-          selectedTags.add(selectedLabel);
+          selectedTags.removeWhere((tag) => tag.label == selectedLabel.label);
         } else {
           print('Selected Tag: ${selectedLabel.label}');
-          selectedTags.removeWhere((tag) => tag.label == selectedLabel.label);
+          if (!selectedTags.contains(selectedLabel)) {
+            selectedTags.add(selectedLabel);
         }
-        //setState(() {});
+        }
+        print(selectedTags.map((tag) => tag.label!).toList());
       },
     );
   }
@@ -516,13 +530,23 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
         }
 
         if (pickedFile != null) {
-          final appDir = await getApplicationDocumentsDirectory();
+          final appDir = await pathProvider.getDownloadsDirectory();
+          bool appFolderExists =
+              await Directory(appDir!.path + '/photos').exists();
+          if (!appFolderExists) {
+            final created = await Directory(appDir.path + '/photos')
+                .create(recursive: true);
+            print(created.path);
+          }
           final fileName = path.basename(pickedFile.path);
-          final savedImage =
-              await File(pickedFile.path).copy('${appDir.path}/$fileName');
+          final savedImage = await File(pickedFile.path)
+              .copy('${appDir.path}/photos/$fileName');
+          print(savedImage); // Its a file
+          setState(() {
 
-          print(savedImage); // Add the image to your album
-          // ...
+            imgList.add(savedImage.path);
+            print(imgList);
+          });
         }
       },
       height: 35.v,
@@ -565,11 +589,7 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
               _buildAdd(context),
             ],
           ),
-          ImageCarousel(imgList: [
-            'assets/images/image_not_found.png',
-            'assets/images/image_not_found.png',
-            'assets/images/image_not_found.png',
-          ])
+          ImageCarousel(imgList: imgList)
         ],
       ),
     );
@@ -597,15 +617,11 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
               _buildAdd(context),
             ],
           ),
-          ImageCarousel(imgList: [
-            'assets/images/image_not_found.png',
-            'assets/images/image_not_found.png',
-            'assets/images/image_not_found.png',
-          ])
+          ImageCarousel(imgList: journalList)
         ],
       ),
     );
-  }                  
+  }
 
   Widget _buildRecordings(BuildContext context) {
     return Padding(
@@ -629,8 +645,24 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
               _buildAddRecording(context),
             ],
           ),
+          SizedBox(height: 10.v),
+          recordingPaths.isEmpty
+              ? Text("No recordings yet.")
+              : Text('Recorded Files:'),
+          Column(
+            children: recordingPaths
+                .map((path) => _buildFileBox(File(path)))
+                .toList(),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFileBox(File file) {
+    return AudioPlayerWidget(
+      audioPath: file.path,
+      isAsset: false,
     );
   }
 
@@ -721,8 +753,18 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
                     ),
                     Spacer(),
                     GestureDetector(
-                      onTap: () {
-                        context.read<RecordCubit>().stopRecording();
+                      onTap: () async {
+                        String? recordingPath =
+                            await context.read<RecordCubit>().stopRecording();
+                        if (recordingPath != null) {
+                          print('Recording saved to: $recordingPath');
+                          // Add the path to your list
+                          setState(() {
+                            recordingPaths.add(recordingPath);
+                          });
+                        } else {
+                          print('Recording failed');
+                        }
                       },
                       child: Container(
                         decoration: BoxDecoration(

@@ -23,6 +23,7 @@ class PeoplePickerBottomsheet extends StatefulWidget {
 }
 
 class _PeoplePickerBottomsheetState extends State<PeoplePickerBottomsheet> {
+  List<PeopleItemModel> mySelectedPeople = [];
   late Future<Map<String, dynamic>> _futureData;
 
   @override
@@ -121,7 +122,13 @@ class _PeoplePickerBottomsheetState extends State<PeoplePickerBottomsheet> {
             ),
           ),
           SizedBox(height: 13.v),
-          PeopleList(people: people),
+          PeopleList(
+            people: people,
+            onSelectionChanged: (selectedPeople) {
+              mySelectedPeople = selectedPeople;
+              print(selectedPeople.map((person) => person.name!).toList());
+            },
+          ),
         ],
       ),
     );

@@ -4,9 +4,13 @@ import 'package:audioplayers/audioplayers.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   final String audioPath;
+  final bool isAsset;
 
-  const AudioPlayerWidget({Key? key, this.audioPath = "recordings/work.mp3"})
-      : super(key: key);
+  const AudioPlayerWidget({
+    Key? key,
+    this.audioPath = "recordings/work.mp3",
+    this.isAsset = true,
+  }) : super(key: key);
 
   @override
   State<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
@@ -38,12 +42,24 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     // Start playing the audio file with volume set to 0
     // This is done so that the widget can get the file duration
     audioPlayer.setVolume(0);
-    audioPlayer.play(AssetSource(widget.audioPath)).then((_) {
-      // Once the audio file has started playing, pause it
-      audioPlayer.pause();
-      // Reset the volume
-      audioPlayer.setVolume(1);
-    });
+
+    if (widget.isAsset) {
+      // If isAsset is true, play the audio from an asset
+      audioPlayer.play(AssetSource(widget.audioPath)).then((_) {
+        // Once the audio file has started playing, pause it
+        audioPlayer.pause();
+        // Reset the volume
+        audioPlayer.setVolume(1);
+      });
+    } else {
+      // If isAsset is false, play the audio from a file path
+      audioPlayer.play(DeviceFileSource(widget.audioPath)).then((_) {
+        // Once the audio file has started playing, pause it
+        audioPlayer.pause();
+        // Reset the volume
+        audioPlayer.setVolume(1);
+      });
+    }
   }
 
   @override
@@ -64,7 +80,12 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                   audioPlayer.pause();
                   isPlaying = false;
                 } else {
-                  audioPlayer.play(AssetSource(widget.audioPath));
+                  // Conditionally play from asset or file path
+                  if (widget.isAsset) {
+                    audioPlayer.play(AssetSource(widget.audioPath));
+                  } else {
+                    audioPlayer.play(DeviceFileSource(widget.audioPath));
+                  }
                   isPlaying = true;
                 }
               });
@@ -76,8 +97,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
               thumbColor: Colors.deepPurple[300],
               activeColor: Colors.deepPurple[300],
               onChanged: (v) {
-                final Position = v * totalDuration.inMilliseconds;
-                audioPlayer.seek(Duration(milliseconds: Position.round()));
+                final position = v * totalDuration.inMilliseconds;
+                audioPlayer.seek(Duration(milliseconds: position.round()));
               },
               value: (position.inMilliseconds > 0 &&
                       totalDuration.inMilliseconds > 0)
