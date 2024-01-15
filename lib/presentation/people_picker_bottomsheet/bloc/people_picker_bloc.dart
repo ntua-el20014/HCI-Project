@@ -25,17 +25,17 @@ class PeoplePickerBloc extends Bloc<PeoplePickerEvent, PeoplePickerState> {
   List<UserprofileItemModel> fillUserprofileItemList() {
     return [
       UserprofileItemModel(
-          userImage: ImageConstant.imgLock, headlineText: "Person"),
+ headlineText: "Person"),
       UserprofileItemModel(
-          userImage: ImageConstant.imgLock, headlineText: "Person"),
+          headlineText: "Person"),
       UserprofileItemModel(
-          userImage: ImageConstant.imgLock, headlineText: "Person"),
+         headlineText: "Person"),
       UserprofileItemModel(
-          userImage: ImageConstant.imgLock, headlineText: "Person"),
+         headlineText: "Person"),
       UserprofileItemModel(
-          userImage: ImageConstant.imgLock, headlineText: "Person"),
+        headlineText: "Person"),
       UserprofileItemModel(
-          userImage: ImageConstant.imgLock, headlineText: "Person")
+        headlineText: "Person")
     ];
   }
 }

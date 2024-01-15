@@ -29,11 +29,6 @@ class UserprofileItemWidget extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomImageView(
-                  imagePath: userprofileItemModelObj.userImage,
-                  height: 24.adaptSize,
-                  width: 24.adaptSize,
-                ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 3.v),
                   child: Text(

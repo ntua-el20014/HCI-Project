@@ -1,4 +1,6 @@
+import 'package:anamnesis/presentation/date_picker_bottomsheet/date_picker_bottomsheet.dart';
 import 'package:anamnesis/presentation/home_list_screen/widgets/label_widget.dart';
+import 'package:anamnesis/presentation/people_picker_bottomsheet/people_picker_bottomsheet.dart';
 
 import 'label_item_model.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +51,20 @@ class _TagCarouselState extends State<TagCarousel> {
                 // Implement the filter editor logic or show a dialog, etc.
                 // For now, just print the label when tapped
                 print('Filter Editor Tapped: ${model.label}');
+
+                if (model.label == 'People') {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) =>
+                        PeoplePickerBottomsheet.builder(context),
+                  );
+                } else if (model.label == 'Date') {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) =>
+                        DatePickerBottomsheet.builder(context),
+                  );
+                }
               }
             },
             child: LabelWidget(
