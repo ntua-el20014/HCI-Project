@@ -19,9 +19,11 @@ class _PermissionRequestState extends State<PermissionRequest> {
 
   void _requestPermissions() async {
     // Request location permission
-    print("Requesting location permission");
+    print("Requesting permissions.");
     await Permission.location.request();
-
+    await Permission.microphone.request();
+    await Permission.manageExternalStorage.request();
+    await Permission.audio.request();
     // Add more permissions to request here
   }
 

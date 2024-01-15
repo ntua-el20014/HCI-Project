@@ -1,3 +1,4 @@
+import 'package:anamnesis/presentation/create_memory_screen/models/record_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,7 +11,7 @@ void main() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]),
-    PrefUtils().init()
+    PrefUtils().init(),
   ]).then((value) {
     runApp(MyApp());
   });
@@ -21,12 +22,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Sizer(
       builder: (context, orientation, deviceType) {
-        return BlocProvider(
-          create: (context) => ThemeBloc(
-            ThemeState(
-              themeType: PrefUtils().getThemeData(),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<ThemeBloc>(
+              create: (context) => ThemeBloc(
+                ThemeState(
+                  themeType: PrefUtils().getThemeData(),
+                ),
+              ),
             ),
-          ),
+            BlocProvider<RecordCubit>(
+              create: (context) => RecordCubit(),
+            ),
+          ],
           child: BlocBuilder<ThemeBloc, ThemeState>(
             builder: (context, state) {
               return MaterialApp(

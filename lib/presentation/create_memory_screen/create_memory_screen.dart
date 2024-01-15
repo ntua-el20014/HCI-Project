@@ -1,4 +1,9 @@
 import 'package:anamnesis/database/database.dart';
+import 'package:anamnesis/presentation/create_memory_screen/models/audio_visualizer.dart';
+import 'package:anamnesis/presentation/create_memory_screen/models/record_cubit.dart';
+import 'package:anamnesis/presentation/create_memory_screen/models/record_stat.dart'
+    as mem;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:anamnesis/presentation/home_list_screen/models/tag_carousel_model.dart';
 import 'bloc/create_memory_bloc.dart';
 import 'models/create_memory_model.dart';
@@ -36,7 +41,7 @@ class CreateMemoryScreen extends StatefulWidget {
 }
 
 class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
-  
+
   Future<Map<String, dynamic>> _getFutureData() async {
     print("Getting future data...");
     Map<String, dynamic> futureData = {"tags": [], "people": []};
@@ -621,7 +626,7 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
                   style: CustomTextStyles.titleLargeBlack900,
                 ),
               ),
-              _buildAdd(context),
+              _buildAddRecording(context),
             ],
           ),
         ],
@@ -629,4 +634,156 @@ Widget _buildSelectTags(BuildContext context, List<LabelItemModel> tags) {
     );
   }
 
+  Widget _buildAddRecording(BuildContext context) {
+    return CustomElevatedButton(
+      onPressed: () async {
+        _showRecordingDialog(context);
+      },
+      height: 35.v,
+      width: 75.h,
+      decoration: null,
+      text: "lbl_add".tr,
+      leftIcon: Container(
+        margin: EdgeInsets.only(right: 8.h),
+        child: CustomImageView(
+          imagePath: ImageConstant.imgPlus,
+          height: 18.adaptSize,
+          width: 18.adaptSize,
+        ),
+      ),
+      buttonStyle: CustomButtonStyles.outlineBlackTL17,
+      buttonTextStyle: CustomTextStyles.titleSmallDeeppurple500,
+    );
+  }
+
+  void _showRecordingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BlocBuilder<RecordCubit, mem.RecordState>(
+          builder: (BuildContext context, mem.RecordState state) {
+            if (state is mem.RecordStopped || state is mem.RecordInitial) {
+              return AlertDialog(
+                title: Text("Recording Options"),
+                content: Column(
+                  children: [
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Spacer(),
+                    TextButton(
+                        child: Icon(
+                          Icons.mic,
+                          color: Colors.black,
+                          size: 50,
+                        ),
+                        onPressed: () async {
+                          await checkAndRequestPermissions();
+                          context.read<RecordCubit>().startRecording();
+                        }),
+                    Spacer(),
+                    SizedBox(
+                      height: 15,
+                    ),
+                  ],
+                ),
+              );
+            } else if (state is mem.RecordOn) {
+              return SafeArea(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Spacer(),
+                    Row(
+                      children: [
+                        Spacer(),
+                        StreamBuilder<double>(
+                          initialData: RecorderConstants.decibleLimit,
+                          stream: context.read<RecordCubit>().aplitudeStream(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return AudioVisualizer(amplitude: snapshot.data);
+                            }
+                            if (snapshot.hasError) {
+                              return Text(
+                                'Visualizer failed to load',
+                                style: TextStyle(color: Colors.black),
+                              );
+                            } else {
+                              return SizedBox();
+                            }
+                          },
+                        ),
+                        Spacer(),
+                      ],
+                    ),
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        context.read<RecordCubit>().stopRecording();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(50),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 10,
+                              offset: Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.stop,
+                          color: Colors.black,
+                          size: 50,
+                        ),
+                        height: 100,
+                        width: 100,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return Center(
+                child: Text(
+                  'An Error occured',
+                  style: TextStyle(color: Colors.black, fontSize: 20),
+                ),
+              );
+            }
+          },
+        );
+      },
+    );
+  }
+}
+
+abstract class RecorderConstants {
+  static const amplitudeCaptureRateInMilliSeconds = 100;
+
+  static const double decibleLimit = -30;
+
+  static const String fileExtention = '.rn';
+}
+
+Future<void> checkAndRequestPermissions() async {
+  Map<Permission, PermissionStatus> permissions = await [
+    Permission.storage,
+    Permission.microphone,
+  ].request();
+
+  if (permissions[Permission.storage] == PermissionStatus.granted &&
+      permissions[Permission.microphone] == PermissionStatus.granted) {
+    // Permissions granted, you can now proceed with recording.
+  } else {
+    print("Permissions not granted before recording.");
+  }
 }
