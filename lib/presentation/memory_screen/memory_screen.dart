@@ -1,8 +1,6 @@
-import '../memory_screen/widgets/photoscarousel_item_widget.dart';
 import '../memory_screen/widgets/userprofile1_item_widget.dart';
 import 'bloc/memory_bloc.dart';
 import 'models/memory_model.dart';
-import 'models/photoscarousel_item_model.dart';
 import 'models/userprofile1_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
@@ -10,7 +8,6 @@ import 'package:anamnesis/widgets/app_bar/appbar_leading_image.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_subtitle.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:anamnesis/widgets/app_bar/custom_app_bar.dart';
-import 'package:anamnesis/widgets/custom_elevated_button.dart';
 import 'package:anamnesis/widgets/custom_switch.dart';
 
 class MemoryScreen extends StatelessWidget {
@@ -59,7 +56,7 @@ class MemoryScreen extends StatelessWidget {
                                 width: 215.h,
                                 margin: EdgeInsets.only(left: 10.h),
                                 child: Text(
-                                    "${memoryModelObj.start_date}  to ${memoryModelObj.start_date},\n ${memoryModelObj.location}",
+                                    "${memoryModelObj.start_date}  to ${memoryModelObj.start_date},\n 📍${memoryModelObj.location}",
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: theme.textTheme.bodyMedium!
@@ -78,7 +75,6 @@ class MemoryScreen extends StatelessWidget {
                             _buildTags(context, memoryModelObj),
                             SizedBox(height: 18.v),
                             _buildPhotos(context),
-                            _buildPhotosCarousel(context),
                             SizedBox(height: 17.v),
                             Padding(
                                 padding: EdgeInsets.only(left: 10.h),
@@ -153,6 +149,7 @@ class MemoryScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               memoryModelObj.tags[i]["label"],
+              style: TextStyle(color: Colors.black),
             ),
           ),
         ),
@@ -170,38 +167,41 @@ class MemoryScreen extends StatelessWidget {
 
   /// Section Widget
   Widget _buildPhotos(BuildContext context) {
-    return Container(
-        width: double.maxFinite,
-        padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 9.v),
-        decoration: AppDecoration.fillWhiteA,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(height: 6.v),
-          Text("lbl_photos".tr, style: CustomTextStyles.titleLargeBold)
-        ]));
-  }
-
-  /// Section Widget
-  Widget _buildPhotosCarousel(BuildContext context) {
-    return Container(
-        height: 198.v,
-        padding: EdgeInsets.symmetric(vertical: 13.v),
-        decoration: AppDecoration.fillWhiteA,
-        child: BlocSelector<MemoryBloc, MemoryState, MemoryModel?>(
-            selector: (state) => state.memoryModelObj,
-            builder: (context, memoryModelObj) {
-              return ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  separatorBuilder: (context, index) {
-                    return SizedBox(width: 14.h);
-                  },
-                  itemCount: memoryModelObj?.photoscarouselItemList.length ?? 0,
-                  itemBuilder: (context, index) {
-                    PhotoscarouselItemModel model =
-                        memoryModelObj?.photoscarouselItemList[index] ??
-                            PhotoscarouselItemModel();
-                    return PhotoscarouselItemWidget(model);
-                  });
-            }));
+    return Column(
+      children: [
+        Container(
+            width: double.maxFinite,
+            padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 9.v),
+            decoration: AppDecoration.fillWhiteA,
+            child: Text("Photos", style: CustomTextStyles.titleLargeBold)),
+        Container(
+            height: 198.v,
+            padding: EdgeInsets.symmetric(vertical: 13.v),
+            decoration: AppDecoration.fillWhiteA,
+            child: BlocSelector<MemoryBloc, MemoryState, MemoryModel?>(
+                selector: (state) => state.memoryModelObj,
+                builder: (context, memoryModelObj) {
+                  if (memoryModelObj?.images.length == 0) {
+                    return Center(child: Text("This memory has no photos"));
+                  }
+                  return ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      separatorBuilder: (context, index) {
+                        return SizedBox(width: 4.h);
+                      },
+                      itemCount: memoryModelObj?.images.length ?? 0,
+                      itemBuilder: (context, index) {
+                        String? imagePath = memoryModelObj?.images[index];
+                        return Container(
+                          padding: EdgeInsets.only(left: 5.h, right: 5.h),
+                          child: CustomImageView(
+                            imagePath: imagePath,
+                          ),
+                        );
+                      });
+                })),
+      ],
+    );
   }
 
   /// Section Widget

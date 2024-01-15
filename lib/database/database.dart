@@ -357,43 +357,43 @@ class DatabaseHelper {
     // Insert into 'memory_images' table
     await db.insert('memory_images', {
       'memory_id': 1,
-      'image_path': 'assets/images/dummy1.png',
+      'image_path': 'assets/images/dummy1.jpg',
     });
     await db.insert('memory_images', {
       'memory_id': 2,
-      'image_path': 'assets/images/dummy2.png',
+      'image_path': 'assets/images/dummy2.jpg',
     });
     await db.insert('memory_images', {
       'memory_id': 3,
-      'image_path': 'assets/images/dummy3.png',
+      'image_path': 'assets/images/dummy3.jpg',
     });
     await db.insert('memory_images', {
       'memory_id': 2,
-      'image_path': 'assets/images/dummy4.png',
+      'image_path': 'assets/images/dummy4.jpg',
     });
     await db.insert('memory_images', {
       'memory_id': 2,
-      'image_path': 'assets/images/dummy5.png',
+      'image_path': 'assets/images/dummy5.jpg',
     });
     await db.insert('memory_images', {
       'memory_id': 1,
-      'image_path': 'assets/images/dummy6.png',
+      'image_path': 'assets/images/dummy6.jpg',
     });
     await db.insert('memory_images', {
       'memory_id': 3,
-      'image_path': 'assets/images/dummy7.png',
+      'image_path': 'assets/images/dummy7.jpg',
     });
     await db.insert('memory_images', {
       'memory_id': 3,
-      'image_path': 'assets/images/dummy8.png',
+      'image_path': 'assets/images/dummy8.jpg',
     });
     await db.insert('memory_images', {
       'memory_id': 3,
-      'image_path': 'assets/images/dummy9.png',
+      'image_path': 'assets/images/dummy9.jpg',
     });
     await db.insert('memory_images', {
       'memory_id': 2,
-      'image_path': 'assets/images/dummy10.png',
+      'image_path': 'assets/images/dummy10.jpg',
     });
     await db.insert('memory_images', {
       'memory_id': 1,
