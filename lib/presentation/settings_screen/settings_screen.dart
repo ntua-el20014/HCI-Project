@@ -17,7 +17,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  double _volumeListenerValue = 0;
+  // double _volumeListenerValue = 0;
   double _setVolumeValue = 0;
 
   @override
@@ -25,7 +25,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     // Listen to system volume change
     VolumeController().listener((volume) {
-      setState(() => _volumeListenerValue = volume);
+      // setState(() => _volumeListenerValue = volume);
     });
 
     VolumeController().getVolume().then((volume) => _setVolumeValue = volume);
