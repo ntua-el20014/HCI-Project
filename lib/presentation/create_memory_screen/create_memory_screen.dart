@@ -4,6 +4,7 @@ import 'package:anamnesis/presentation/create_memory_screen/models/audio_visuali
 import 'package:anamnesis/presentation/create_memory_screen/models/record_cubit.dart';
 import 'package:anamnesis/presentation/create_memory_screen/models/record_stat.dart'
     as mem;
+import 'package:anamnesis/presentation/create_memory_screen/widgets/create_memory_button.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:anamnesis/presentation/memory_screen/widgets/audio_player_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -122,6 +123,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                     _buildJournals(context),
                     SizedBox(height: 30.v),
                     _buildRecordings(context),
+                    CreateMemoryButton(),
                   ],
                 ),
               ),
@@ -482,7 +484,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
           print('Selected Tag: ${selectedLabel.label}');
           if (!selectedTags.contains(selectedLabel)) {
             selectedTags.add(selectedLabel);
-        }
+          }
         }
         print(selectedTags.map((tag) => tag.label!).toList());
       },
@@ -543,7 +545,6 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
               .copy('${appDir.path}/photos/$fileName');
           print(savedImage); // Its a file
           setState(() {
-
             imgList.add(savedImage.path);
             print(imgList);
           });

@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:latlong2/latlong.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'database_tables.dart';
@@ -35,20 +36,24 @@ class DatabaseHelper {
     return await db.insert('person', person.toMap());
   }
 
+  // Data insertion
   Future<int> insertMemory(
-      {required title,
-      required thumbnail,
-      required startDate,
-      required endDate,
-      required location,
-      required userTrip,
-      trackLocation = false,
+      {String title = "Untitled Memory",
+      String thumbnail = "assets/images/image_not_found.png",
+      required DateTime startDate,
+      required DateTime endDate,
+      required LatLng location,
+      List<LatLng>? userTrip,
+      bool trackLocation = false,
       List<String> images = const [],
       List<String> journalPages = const [],
       List<String> recordings = const [],
       List<int> tags = const [],
       List<int> people = const []}) async {
+    print("Inserting memory into database");
     final db = await this.db;
+    userTrip ??= [location];
+
     //Create memory table entry
     Memory memory = Memory(
         title: title,
@@ -91,6 +96,7 @@ class DatabaseHelper {
       MemoryPeople memPerson = MemoryPeople(memoryId: memId, personId: person);
       await db.insert('memory_people', memPerson.toMap());
     }
+    print("Memory inserted");
     return memId;
   }
 
