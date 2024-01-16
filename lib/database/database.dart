@@ -38,21 +38,32 @@ class DatabaseHelper {
 
   // Data insertion
   Future<int> insertMemory(
-      {String title = "Untitled Memory",
-      String thumbnail = "assets/images/image_not_found.png",
-      required DateTime startDate,
-      required DateTime endDate,
-      required LatLng location,
+      {String? title,
+      String? thumbnail,
+      DateTime? startDate,
+      DateTime? endDate,
+      LatLng? location,
       List<LatLng>? userTrip,
-      bool trackLocation = false,
-      List<String> images = const [],
-      List<String> journalPages = const [],
-      List<String> recordings = const [],
-      List<int> tags = const [],
-      List<int> people = const []}) async {
+      bool? trackLocation,
+      List<String>? images,
+      List<String>? journalPages,
+      List<String>? recordings,
+      List<int>? tags,
+      List<int>? people}) async {
     print("Inserting memory into database");
     final db = await this.db;
+    title ??= "Untitled Memory";
+    thumbnail ??= "assets/images/image_not_found.png";
+    startDate ??= DateTime.now();
+    endDate ??= DateTime.now();
+    location ??= const LatLng(0, 0);
     userTrip ??= [location];
+    trackLocation ??= false;
+    images ??= [];
+    journalPages ??= [];
+    recordings ??= [];
+    tags ??= [];
+    people ??= [];
 
     //Create memory table entry
     Memory memory = Memory(
