@@ -17,6 +17,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  // ignore: unused_field
   double _volumeListenerValue = 0;
   double _setVolumeValue = 0;
 
