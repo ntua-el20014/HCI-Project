@@ -126,7 +126,7 @@ class _PeoplePickerBottomsheetState extends State<PeoplePickerBottomsheet> {
             people: people,
             onSelectionChanged: (selectedPeople) {
               mySelectedPeople = selectedPeople;
-              print(selectedPeople.map((person) => person.name!).toList());
+              print(mySelectedPeople.map((person) => person.name!).toList());
             },
           ),
         ],
