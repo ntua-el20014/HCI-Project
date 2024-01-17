@@ -5,6 +5,7 @@ import 'package:anamnesis/presentation/create_memory_screen/models/record_cubit.
 import 'package:anamnesis/presentation/create_memory_screen/models/record_stat.dart'
     as mem;
 import 'package:anamnesis/presentation/create_memory_screen/widgets/create_memory_button.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:anamnesis/presentation/memory_screen/widgets/audio_player_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -44,9 +45,20 @@ class CreateMemoryScreen extends StatefulWidget {
 }
 
 class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
+  final GlobalKey<CreateMemoryButtonState> createMemoryButtonKey =
+      GlobalKey<CreateMemoryButtonState>();
+  TextEditingController locationController = TextEditingController();
   List<String> recordingPaths = [];
+  final ValueNotifier<List<String>> recordingsNotifier =
+      ValueNotifier<List<String>>([]);
+  LatLng? myLocation;
   List<String> imgList = [];
+  final ValueNotifier<List<String>> imgListNotifier =
+      ValueNotifier<List<String>>([]);
   List<String> journalList = [];
+  final ValueNotifier<List<String>> journalNotifier =
+      ValueNotifier<List<String>>([]);
+  final List<LabelItemModel> selectedTags = [];
   List<PeopleItemModel> mySelectedPeople = [];
   AudioPlayerController audioPlayerController = AudioPlayerController();
 
@@ -123,7 +135,20 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                     _buildJournals(context),
                     SizedBox(height: 30.v),
                     _buildRecordings(context),
-                    CreateMemoryButton(),
+                    CreateMemoryButton(
+                      key: createMemoryButtonKey,
+                      title: "New Memory",
+                      startDate: DateTime.now(),
+                      endDate: null,
+                      // ignore: sdk_version_since
+                      thumbnail: imgList.isNotEmpty ? imgList.first : null,
+                      location: myLocation,
+                      people: mySelectedPeople,
+                      images: imgList,
+                      journalPages: journalList,
+                      recordings: recordingPaths,
+                      tags: selectedTags.map((tag) => tag.id!).toList(),
+                    ),
                   ],
                 ),
               ),
@@ -342,84 +367,15 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BlocSelector<CreateMemoryBloc, CreateMemoryState,
-              TextEditingController?>(
-            selector: (state) => state.locationController,
-            builder: (context, locationController) {
-              return TextField(
-                autofocus: false,
-                maxLines: 1,
-                scrollPadding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                controller: locationController,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(13.h, 17.v, 13.h, 13.v),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: appTheme.blueGray100,
-                      width: 1,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: appTheme.blueGray100,
-                      width: 1,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.h),
-                    borderSide: BorderSide(
-                      color: appTheme.deepPurple500,
-                      width: 3,
-                    ),
-                  ),
-                  isDense: true,
-                  labelText: "lbl_location".tr,
-                  labelStyle: CustomTextStyles.titleLarge20_1,
-                  hintText: "lbl_location".tr,
-                  suffixIcon: GestureDetector(
-                    onTap: () async {
-                      // Get current location
-                      try {
-                        Position position = await Geolocator.getCurrentPosition(
-                            desiredAccuracy: LocationAccuracy.high);
-                        String locationString =
-                            "${position.latitude}, ${position.longitude}";
-
-                        // Update text controller with the current location
-                        locationController?.text = locationString;
-                      } catch (e) {
-                        print("Error getting location: $e");
-                      }
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 12.h),
-                      child: CustomImageView(
-                        color: appTheme.deepPurple500,
-                        imagePath: ImageConstant.imgContrastDeepPurple500,
-                        height: 24.adaptSize,
-                        width: 24.adaptSize,
-                      ),
-                    ),
-                  ),
-                ),
-                textInputAction: TextInputAction.done,
-              );
-            },
-          ),
-          SizedBox(height: 4.v),
-          Padding(
-            padding: EdgeInsets.only(left: 16.h),
-            child: Text(
-              "msg_search_or_pick_your".tr,
-              style: CustomTextStyles.bodyMedium_1,
-            ),
+          LocationInputWidget(
+            createMemoryButtonKey: createMemoryButtonKey,
+            myLocation: myLocation,
+            locationController: locationController,
           ),
         ],
       ),
     );
   }
-
   /// Section Widget
   Widget _buildAddPeople(BuildContext context, List<PeopleItemModel> people) {
     return Container(
@@ -438,7 +394,10 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
             people: people,
             onSelectionChanged: (selectedPeople) {
               mySelectedPeople = selectedPeople;
-              print(selectedPeople.map((person) => person.name!).toList());
+              print(mySelectedPeople.map((person) => person.name!).toList());
+              createMemoryButtonKey.currentState?.updateParameters(
+                people: mySelectedPeople,
+              );
             },
           ),
         ],
@@ -470,7 +429,6 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
 
   /// Section Widget
   Widget _buildTagCarousel(BuildContext context, List<LabelItemModel> tags) {
-    final List<LabelItemModel> selectedTags = [];
     return TagCarousel(
       // Create a list to store the selected tags
       labels: tags,
@@ -487,6 +445,9 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
           }
         }
         print(selectedTags.map((tag) => tag.label!).toList());
+        createMemoryButtonKey.currentState?.updateParameters(
+          tags: selectedTags.map((tag) => tag.id!).toList(),
+        );
       },
     );
   }
@@ -543,11 +504,10 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
           final fileName = path.basename(pickedFile.path);
           final savedImage = await File(pickedFile.path)
               .copy('${appDir.path}/photos/$fileName');
-          print(savedImage); // Its a file
-          setState(() {
-            imgList.add(savedImage.path);
+          print(savedImage);
+          imgList.add(savedImage.path);
             print(imgList);
-          });
+          imgListNotifier.value = imgList; // Its a file
         }
       },
       height: 35.v,
@@ -590,7 +550,12 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
               _buildAdd(context),
             ],
           ),
-          ImageCarousel(imgList: imgList)
+          ValueListenableBuilder<List<String>>(
+            valueListenable: imgListNotifier,
+            builder: (context, value, child) {
+              return ImageCarousel(imgList: value);
+            },
+          ),
         ],
       ),
     );
@@ -647,13 +612,17 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
             ],
           ),
           SizedBox(height: 10.v),
-          recordingPaths.isEmpty
-              ? Text("No recordings yet.")
-              : Text('Recorded Files:'),
-          Column(
-            children: recordingPaths
-                .map((path) => _buildFileBox(File(path)))
-                .toList(),
+          ValueListenableBuilder<List<String>>(
+            valueListenable: recordingsNotifier,
+            builder: (context, value, child) {
+              return value.isEmpty
+                  ? Text("No recordings yet.")
+                  : Column(
+                      children: value
+                          .map((path) => _buildFileBox(File(path)))
+                          .toList(),
+                    );
+            },
           ),
         ],
       ),
@@ -760,9 +729,10 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                         if (recordingPath != null) {
                           print('Recording saved to: $recordingPath');
                           // Add the path to your list
-                          setState(() {
+                          
                             recordingPaths.add(recordingPath);
-                          });
+                          recordingsNotifier.value = recordingPaths;
+                         
                         } else {
                           print('Recording failed');
                         }
@@ -828,5 +798,115 @@ Future<void> checkAndRequestPermissions() async {
     // Permissions granted, you can now proceed with recording.
   } else {
     print("Permissions not granted before recording.");
+  }
+}
+
+
+// ignore: must_be_immutable
+class LocationInputWidget extends StatefulWidget {
+  LatLng? myLocation;
+  final TextEditingController? locationController;
+  final GlobalKey<CreateMemoryButtonState> createMemoryButtonKey;
+
+  LocationInputWidget({
+    Key? key,
+    required this.myLocation,
+    required this.locationController,
+    required this.createMemoryButtonKey,
+  }) : super(key: key);
+  @override
+  _LocationInputWidgetState createState() => _LocationInputWidgetState();
+}
+
+class _LocationInputWidgetState extends State<LocationInputWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(right: 6.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadiusStyle.customBorderTL4,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            autofocus: false,
+            maxLines: 1,
+            scrollPadding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            controller: widget.locationController,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.fromLTRB(13.h, 17.v, 13.h, 13.v),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: appTheme.blueGray100,
+                  width: 1,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: appTheme.blueGray100,
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4.h),
+                borderSide: BorderSide(
+                  color: appTheme.deepPurple500,
+                  width: 3,
+                ),
+              ),
+              isDense: true,
+              labelText: "lbl_location".tr,
+              labelStyle: CustomTextStyles.titleLarge20_1,
+              hintText: "lbl_location".tr,
+              suffixIcon: GestureDetector(
+                onTap: () async {
+                  // Get current location
+                  try {
+                    Position position = await Geolocator.getCurrentPosition(
+                        desiredAccuracy: LocationAccuracy.high);
+                    String locationString =
+                        "${position.latitude}, ${position.longitude}";
+                    widget.myLocation =
+                        LatLng(position.latitude, position.longitude);
+                    print(widget.myLocation);
+                    widget.createMemoryButtonKey.currentState?.updateParameters(
+                      location: widget.myLocation,
+                    );
+                    setState(() {
+                      widget.myLocation = widget.myLocation;
+                    });
+
+                    // Update text controller with the current location
+                    widget.locationController?.text = locationString;
+                  } catch (e) {
+                    print("Error getting location: $e");
+                  }
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 12.h),
+                  child: CustomImageView(
+                    color: appTheme.deepPurple500,
+                    imagePath: ImageConstant.imgContrastDeepPurple500,
+                    height: 24.adaptSize,
+                    width: 24.adaptSize,
+                  ),
+                ),
+              ),
+            ),
+            textInputAction: TextInputAction.done,
+          ),
+          SizedBox(height: 4.v),
+          Padding(
+            padding: EdgeInsets.only(left: 16.h),
+            child: Text(
+              "msg_search_or_pick_your".tr,
+              // style: CustomTextStyles.bodyMedium_1,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

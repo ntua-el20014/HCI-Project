@@ -369,6 +369,9 @@ class MemoryScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return AudioPlayerWidget(
                     audioPath: memoryModelObj?.recordings[index],
+                    isAsset: memoryModelObj?.recordings[index]
+                            .startsWith('assets/') ??
+                        false,
                   );
                 },
               );
