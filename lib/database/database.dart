@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:latlong2/latlong.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'database_tables.dart';
@@ -35,20 +36,35 @@ class DatabaseHelper {
     return await db.insert('person', person.toMap());
   }
 
+  // Data insertion
   Future<int> insertMemory(
-      {required title,
-      required thumbnail,
-      required startDate,
-      required endDate,
-      required location,
-      required userTrip,
-      trackLocation = false,
-      List<String> images = const [],
-      List<String> journalPages = const [],
-      List<String> recordings = const [],
-      List<int> tags = const [],
-      List<int> people = const []}) async {
+      {String? title,
+      String? thumbnail,
+      DateTime? startDate,
+      DateTime? endDate,
+      LatLng? location,
+      List<LatLng>? userTrip,
+      bool? trackLocation,
+      List<String>? images,
+      List<String>? journalPages,
+      List<String>? recordings,
+      List<int>? tags,
+      List<int>? people}) async {
+    print("Inserting memory into database");
     final db = await this.db;
+    title ??= "Untitled Memory";
+    thumbnail ??= "assets/images/image_not_found.png";
+    startDate ??= DateTime.now();
+    endDate ??= DateTime.now();
+    location ??= const LatLng(0, 0);
+    userTrip ??= [location];
+    trackLocation ??= false;
+    images ??= [];
+    journalPages ??= [];
+    recordings ??= [];
+    tags ??= [];
+    people ??= [];
+
     //Create memory table entry
     Memory memory = Memory(
         title: title,
@@ -91,6 +107,7 @@ class DatabaseHelper {
       MemoryPeople memPerson = MemoryPeople(memoryId: memId, personId: person);
       await db.insert('memory_people', memPerson.toMap());
     }
+    print("Memory inserted");
     return memId;
   }
 
