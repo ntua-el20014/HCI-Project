@@ -1,5 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'dart:io';
+
+import 'package:anamnesis/presentation/home_list_screen/home_list_screen.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -20,7 +23,14 @@ class DatabaseHelper {
   initDb() async {
     String path = join(await getDatabasesPath(), 'anamnesis.db');
     print("Opening database in $path");
-    return await openDatabase(path, onCreate: _createTables, version: 1);
+    return await openDatabase(
+      path,
+      onCreate: _createTables,
+      version: 1,
+      onConfigure: (db) async {
+        await db.execute('PRAGMA foreign_keys = ON');
+      },
+    );
   }
 
   //Data insertion
@@ -167,14 +177,12 @@ class DatabaseHelper {
     memory['images'] = imageMaps.map((map) => map['image_path']).toList();
 
     // Get journal pages for this memory
-    // Here I return the page ids.
-    // Maybe I'll change this to return maps of text and date.
     final List<Map<String, dynamic>> journalMaps = await db.query(
       'memory_journal',
       where: 'memory_id = ?',
       whereArgs: [id],
     );
-    memory['journal_pages'] = journalMaps.map((map) => map["id"]).toList();
+    memory['journal_pages'] = journalMaps;
 
     // Get recordings for this memory
     final List<Map<String, dynamic>> recordingMaps = await db.query(
@@ -207,6 +215,50 @@ class DatabaseHelper {
   //Data update
 
   //Data deletion
+  Future<void> deleteMemory(int id) async {
+    //Handles deletion of a memory from the database
+    //but also the deletion of associated files
+
+    final db = await this.db;
+
+    // Delete associated image files
+    // final List<Map<String, dynamic>> imageMaps = await db.query(
+    //   'memory_images',
+    //   columns: ['image_path'],
+    //   where: 'memory_id = ?',
+    //   whereArgs: [id],
+    // );
+    // for (Map<String, dynamic> imageMap in imageMaps) {
+    //   // need to know where files are stored first
+    //   // await deleteFile(imageMap['image_path']);
+    // }
+
+    // Delete associated recording files
+    // final List<Map<String, dynamic>> recordingMaps = await db.query(
+    //   'memory_recordings',
+    //   columns: ['rec_path'],
+    //   where: 'memory_id = ?',
+    //   whereArgs: [id],
+    // );
+    // for (Map<String, dynamic> recordingMap in recordingMaps) {
+    //   File recFile = File(recordingMap['rec_path']);
+    //   if (await recFile.exists()) {
+    //     await recFile.delete();
+    //   }
+    // }
+
+    await db.delete('memory', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteTag(int id) async {
+    final db = await this.db;
+    await db.delete('tag', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deletePerson(int id) async {
+    final db = await this.db;
+    await db.delete('person', where: 'id = ?', whereArgs: [id]);
+  }
 
   //Helper functions
   Future<bool> _isDatabaseEmpty() async {
@@ -253,29 +305,29 @@ class DatabaseHelper {
       memory_id INTEGER,
       image_path TEXT,
       UNIQUE(memory_id, image_path),
-      FOREIGN KEY(memory_id) REFERENCES memory(id)
+      FOREIGN KEY(memory_id) REFERENCES memory(id) ON DELETE CASCADE
     )""");
     await db.execute("""CREATE TABLE memory_journal(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       memory_id INTEGER,
       page_date TEXT,
       page_text TEXT,
-      FOREIGN KEY(memory_id) REFERENCES memory(id)
+      FOREIGN KEY(memory_id) REFERENCES memory(id) ON DELETE CASCADE
     )""");
     await db.execute("""CREATE TABLE memory_recordings(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       memory_id INTEGER,
       rec_path TEXT,
       UNIQUE(memory_id, rec_path),
-      FOREIGN KEY(memory_id) REFERENCES memory(id)
+      FOREIGN KEY(memory_id) REFERENCES memory(id) ON DELETE CASCADE
     )""");
     await db.execute("""CREATE TABLE memory_tags(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       memory_id INTEGER,
       tag_id INTEGER,
       UNIQUE(memory_id, tag_id),
-      FOREIGN KEY(memory_id) REFERENCES memory(id),
-      FOREIGN KEY(tag_id) REFERENCES tag(id)
+      FOREIGN KEY(memory_id) REFERENCES memory(id) ON DELETE CASCADE,
+      FOREIGN KEY(tag_id) REFERENCES tag(id) ON DELETE RESTRICT
     )""");
     await db.execute("""CREATE TABLE tag(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -286,8 +338,8 @@ class DatabaseHelper {
       memory_id INTEGER,
       person_id INTEGER,
       UNIQUE(memory_id, person_id),
-      FOREIGN KEY(memory_id) REFERENCES memory(id),
-      FOREIGN KEY(person_id) REFERENCES person(id)
+      FOREIGN KEY(memory_id) REFERENCES memory(id) ON DELETE CASCADE,
+      FOREIGN KEY(person_id) REFERENCES person(id) ON DELETE RESTRICT 
     )""");
     await db.execute("""CREATE TABLE person(
       id INTEGER PRIMARY KEY AUTOINCREMENT,

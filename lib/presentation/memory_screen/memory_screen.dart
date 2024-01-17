@@ -1,3 +1,4 @@
+import 'package:anamnesis/database/database.dart';
 import 'package:anamnesis/presentation/memory_screen/widgets/audio_player_widget.dart';
 
 import 'bloc/memory_bloc.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_leading_image.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_subtitle.dart';
-import 'package:anamnesis/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:anamnesis/widgets/app_bar/custom_app_bar.dart';
 import 'package:anamnesis/widgets/custom_switch.dart';
 
@@ -122,12 +122,85 @@ class MemoryScreen extends StatelessWidget {
         centerTitle: true,
         title: AppbarSubtitle(text: memoryModelObj.title),
         actions: [
-          AppbarTrailingImage(
-              imagePath: ImageConstant.imgNotification,
-              color: Colors.black,
-              margin: EdgeInsets.symmetric(horizontal: 14.h, vertical: 12.v))
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert),
+            onSelected: (String result) {
+              // Handle menu item selection
+              print('Selected: $result');
+            },
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem<String>(
+                value: 'discard',
+                child: ListTile(
+                  leading: Icon(Icons.delete, color: appTheme.red500),
+                  onTap: () {
+                    _showDeleteDialogue(context, memoryModelObj);
+                  },
+                  title: Text(
+                    'Delete memory',
+                    style: CustomTextStyles.titleSmallRed500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
         styleType: Style.bgShadow);
+  }
+
+  void _showDeleteDialogue(BuildContext context, MemoryModel memoryModelObj) {
+    print("Delete dialogue");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ), //this right here
+          child: Container(
+            height: 200,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Are you sure?",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                      "This action will delete your memory, along with its photos, journal entries and recordings."),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        child: Text('Delete memory'),
+                        onPressed: () async {
+                          DatabaseHelper dbHelp = DatabaseHelper();
+                          await dbHelp.deleteMemory(memoryModelObj.id);
+                          NavigatorService.pushNamed(
+                            AppRoutes.homeListScreen,
+                          );
+                        },
+                      ),
+                      TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          // Add your add button logic here
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   String _getPeople(MemoryModel memoryModelObj) {
