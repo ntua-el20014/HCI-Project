@@ -87,7 +87,7 @@ class MemoryImages {
     return {
       'id': id,
       'memory_id': memoryId,
-      'image': imagePath,
+      'image_path': imagePath,
     };
   }
 
@@ -95,7 +95,7 @@ class MemoryImages {
     return MemoryImages(
       id: map['id'],
       memoryId: map['memory_id'],
-      imagePath: map['image'],
+      imagePath: map['image_path'],
     );
   }
 }
