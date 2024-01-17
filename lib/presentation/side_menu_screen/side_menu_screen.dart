@@ -1,7 +1,10 @@
+import 'package:anamnesis/database/database.dart';
+
 import 'bloc/side_menu_bloc.dart';
 import 'models/side_menu_model.dart';
 import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
+
 class SideMenuScreen extends StatelessWidget {
   const SideMenuScreen({Key? key}) : super(key: key);
 
@@ -14,7 +17,7 @@ class SideMenuScreen extends StatelessWidget {
   }
 
   @override
-Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Stack(
       children: [
         GestureDetector(
@@ -51,7 +54,7 @@ Widget build(BuildContext context) {
                     );
                   },
                   child:
-                      Text("lbl_people".tr, style: theme.textTheme.bodyLarge),
+                      Text("People & Tags", style: theme.textTheme.bodyLarge),
                 ),
                 SizedBox(height: 35.v),
                 GestureDetector(
@@ -82,8 +85,7 @@ Widget build(BuildContext context) {
                       AppRoutes.aboutScreen,
                     );
                   },
-                  child:
-                      Text("lbl_about".tr, style: theme.textTheme.bodyLarge),
+                  child: Text("lbl_about".tr, style: theme.textTheme.bodyLarge),
                 ),
                 SizedBox(height: 5.v),
                 Spacer(), // Pushes the following widgets to the bottom
@@ -103,8 +105,6 @@ Widget build(BuildContext context) {
     );
   }
 
-
-
   /// Navigates to the previous screen.
   onTapArrowLeft(BuildContext context) {
     NavigatorService.goBack();
@@ -112,6 +112,8 @@ Widget build(BuildContext context) {
 }
 
 void showAddTagDialog(BuildContext context) {
+  final TextEditingController _textController = TextEditingController();
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -128,6 +130,7 @@ void showAddTagDialog(BuildContext context) {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextField(
+                  controller: _textController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: 'Enter your tag',
@@ -145,9 +148,13 @@ void showAddTagDialog(BuildContext context) {
                     ),
                     TextButton(
                       child: Text('Add'),
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.of(context).pop();
-                        // Add your add button logic here
+                        DatabaseHelper dbHelp = DatabaseHelper();
+                        await dbHelp.insertTag(label: _textController.text);
+                        NavigatorService.pushNamed(
+                          AppRoutes.peopleScreen,
+                        );
                       },
                     ),
                   ],
@@ -162,6 +169,8 @@ void showAddTagDialog(BuildContext context) {
 }
 
 void showAddPeopleDialog(BuildContext context) {
+  final TextEditingController _textController = TextEditingController();
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -178,6 +187,7 @@ void showAddPeopleDialog(BuildContext context) {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextField(
+                  controller: _textController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: 'Add a new person',
@@ -195,9 +205,13 @@ void showAddPeopleDialog(BuildContext context) {
                     ),
                     TextButton(
                       child: Text('Add'),
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.of(context).pop();
-                        // Add your add button logic here
+                        DatabaseHelper dbHelp = DatabaseHelper();
+                        await dbHelp.insertPerson(name: _textController.text);
+                        NavigatorService.pushNamed(
+                          AppRoutes.peopleScreen,
+                        );
                       },
                     ),
                   ],

@@ -1,8 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'dart:io';
-
-import 'package:anamnesis/presentation/home_list_screen/home_list_screen.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -34,19 +31,18 @@ class DatabaseHelper {
   }
 
   //Data insertion
-  Future<int> insertTag({required label}) async {
+  Future<int> insertTag({required String label}) async {
     Tag tag = Tag(label: label);
     final db = await this.db;
     return await db.insert('tag', tag.toMap());
   }
 
-  Future<int> insertPerson({required name}) async {
+  Future<int> insertPerson({required String name}) async {
     Person person = Person(name: name);
     final db = await this.db;
     return await db.insert('person', person.toMap());
   }
 
-  // Data insertion
   Future<int> insertMemory(
       {String? title,
       String? thumbnail,
@@ -65,7 +61,7 @@ class DatabaseHelper {
     title ??= "Untitled Memory";
     thumbnail ??= "assets/images/image_not_found.png";
     startDate ??= DateTime.now();
-    endDate ??= DateTime.now();
+    endDate ??= startDate;
     location ??= const LatLng(0, 0);
     userTrip ??= [location];
     trackLocation ??= false;
@@ -123,16 +119,22 @@ class DatabaseHelper {
 
   //Data retrieval
   Future<List<Map<String, dynamic>>> getTags() async {
-    //Now returns every row as a map.
-    //Might change this to return a list of Tag objects.
-    //Same for getPeople().
     final db = await this.db;
-    return await db.query('tag');
+    return await db.rawQuery('''
+      SELECT tag.id, tag.label, COUNT(memory_tags.memory_id) AS memory_count
+      FROM tag LEFT JOIN memory_tags ON tag.id = memory_tags.tag_id
+      GROUP BY tag.id
+    ''');
   }
 
   Future<List<Map<String, dynamic>>> getPeople() async {
     final db = await this.db;
-    return await db.query('person');
+
+    return await db.rawQuery('''
+      SELECT person.id, person.name, COUNT(memory_people.memory_id) AS memory_count
+      FROM person LEFT JOIN memory_people ON person.id = memory_people.person_id
+      GROUP BY person.id
+    ''');
   }
 
   Future<List<Map<String, dynamic>>> getMemories() async {
@@ -210,6 +212,17 @@ class DatabaseHelper {
     memory['people'] = personMaps;
 
     return memory;
+  }
+
+  Future<int> personMemoryCount() async {
+    final db = await this.db;
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+      SELECT person.id, person.name, COUNT(memory_people.memory_id) AS memory_count
+      FROM person
+      LEFT JOIN memory_people ON person.id = memory_people.person_id
+      GROUP BY person.id
+    ''');
+    return maps.length;
   }
 
   //Data update
