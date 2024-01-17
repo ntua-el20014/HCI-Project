@@ -137,16 +137,73 @@ class DatabaseHelper {
     ''');
   }
 
-  Future<List<Map<String, dynamic>>> getMemories() async {
+  Future<List<Map<String, dynamic>>> getMemories({
+    String? title,
+    List<int>? tags,
+    List<DateTime>? date, //[lowerEnd, upperEnd], lowerEnd<=startDate<=upperEnd
+    int? duration, // in days
+    List<int>? people,
+  }) async {
     // Returnes all memories and their basic attributes
+    // after aplying any given filters
+    title ??= "";
+    tags ??= [];
+    date ??= [];
+    duration ??= null;
+    people ??= [];
+
     final db = await this.db;
-    final List<Map<String, dynamic>> maps = await db.query('memory');
+
+    // tags filter
+    String tagsJoin = (tags.length == 0)
+        ? ""
+        : "LEFT JOIN memory_tags ON memory.id = memory_tags.memory_id";
+    String tagsWhere = (tags.length == 0)
+        ? ""
+        : "AND memory_tags.tag_id IN (${tags.join(",")})";
+
+    // people filter
+    String peopleJoin = (people.length == 0)
+        ? ""
+        : "LEFT JOIN memory_people ON memory.id = memory_people.memory_id";
+    String peopleWhere = (people.length == 0)
+        ? ""
+        : "AND memory_people.person_id IN (${people.join(",")})";
+
+    // date filter
+    String dateWhere = (date.length != 2)
+        ? ""
+        : "AND memory.start_date BETWEEN '${date[0].toString()}' AND '${date[1].toString()}'";
+
+    // duration filter
+    String durationWhere = (duration == null)
+        ? ""
+        : "AND memory.end_date BETWEEN memory.start_date AND date(memory.start_date, '+${duration} day')";
+
+    String query = '''
+      SELECT memory.*
+      FROM memory
+      ${tagsJoin}
+      ${peopleJoin}
+      WHERE memory.title LIKE '%${title}%'
+      ${tagsWhere}
+      ${peopleWhere}
+      ${dateWhere}
+      ${durationWhere}
+      GROUP BY memory.id
+      ''';
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(query);
+
+    // final List<Map<String, dynamic>> maps = await db.query("memory");
 
     List<Map<String, dynamic>> memories = [];
     for (int i = 0; i < maps.length; i++) {
       Map<String, dynamic> memory = Memory.fromMap(maps[i]).toDatatypeMap();
       memories.add(memory);
     }
+
+    // print("getMemories() ended successfuly, with the query:\n$query");
     return memories;
   }
 
