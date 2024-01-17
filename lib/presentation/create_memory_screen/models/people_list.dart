@@ -6,6 +6,7 @@ class PeopleItemModel {
     this.name,
     this.isSelected,
     this.id,
+    this.memoryCount,
   }) {
     name = name ?? "";
     isSelected = isSelected ?? false;
@@ -14,6 +15,7 @@ class PeopleItemModel {
   String? name;
   bool? isSelected;
   int? id;
+  int? memoryCount;
 }
 
 class PeopleList extends StatefulWidget {

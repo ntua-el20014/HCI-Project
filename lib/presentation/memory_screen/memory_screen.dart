@@ -176,6 +176,13 @@ class MemoryScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          // Add your add button logic here
+                        },
+                      ),
+                      TextButton(
                         child: Text('Delete memory'),
                         onPressed: () async {
                           DatabaseHelper dbHelp = DatabaseHelper();
@@ -183,13 +190,6 @@ class MemoryScreen extends StatelessWidget {
                           NavigatorService.pushNamed(
                             AppRoutes.homeListScreen,
                           );
-                        },
-                      ),
-                      TextButton(
-                        child: Text('Cancel'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          // Add your add button logic here
                         },
                       ),
                     ],
