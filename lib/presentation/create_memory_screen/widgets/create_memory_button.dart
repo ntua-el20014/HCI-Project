@@ -172,6 +172,6 @@ class CreateMemoryButtonState extends State<CreateMemoryButton> {
   }
 
   bool _checkIfMemoryIsValid() {
-    return title != null && location != null;
+    return title != null && title!.isNotEmpty && location != null;
   }
 }

@@ -47,6 +47,8 @@ class CreateMemoryScreen extends StatefulWidget {
 class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
   final GlobalKey<CreateMemoryButtonState> createMemoryButtonKey =
       GlobalKey<CreateMemoryButtonState>();
+  late String currentTitle = ""; // Store the latest text value
+  final ValueNotifier<String> titleNotifier = ValueNotifier<String>('');
   TextEditingController locationController = TextEditingController();
   List<String> recordingPaths = [];
   final ValueNotifier<List<String>> recordingsNotifier =
@@ -60,6 +62,11 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
       ValueNotifier<List<String>>([]);
   final List<LabelItemModel> selectedTags = [];
   List<PeopleItemModel> mySelectedPeople = [];
+  File? thumbnailImage;
+  DateTime? startDate;
+  DateTime? endDate;
+  final ValueNotifier<String> datesNotifier = ValueNotifier<String>("");
+  final ValueNotifier<File?> thumbnailNotifier = ValueNotifier<File?>(null);
   AudioPlayerController audioPlayerController = AudioPlayerController();
 
   Future<Map<String, dynamic>> _getFutureData() async {
@@ -122,8 +129,20 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                     SizedBox(height: 10.v),
                     _buildTitle1(context),
                     SizedBox(height: 15.v),
-                    _buildInputDatePicker(context),
-                    SizedBox(height: 20.v),
+                    _buildThumbnail(context),
+                    SizedBox(height: 40.v),
+                    _buildSelectDateRangeButton(context),
+                    SizedBox(height: 10.v),
+                    ValueListenableBuilder<String>(
+                      valueListenable: datesNotifier,
+                      builder: (context, datesNotifier, child) {
+                        return Text(
+                          datesNotifier,
+                          style: CustomTextStyles.titleSmallDeeppurple500,
+                        );
+                      },
+                    ),
+                    SizedBox(height: 40.v),
                     _buildLocation(context),
                     SizedBox(height: 20.v),
                     _buildAddPeople(context, data["people"]),
@@ -137,11 +156,11 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                     _buildRecordings(context),
                     CreateMemoryButton(
                       key: createMemoryButtonKey,
-                      title: "New Memory",
-                      startDate: DateTime.now(),
-                      endDate: null,
+                      title: currentTitle,
+                      startDate: startDate,
+                      endDate: endDate,
                       // ignore: sdk_version_since
-                      thumbnail: imgList.isNotEmpty ? imgList.first : null,
+                      thumbnail: thumbnailImage?.path,
                       location: myLocation,
                       people: mySelectedPeople,
                       images: imgList,
@@ -202,7 +221,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                 ),
               ),
             ),
-            PopupMenuItem<String>(
+            /*PopupMenuItem<String>(
               value: 'save',
               child: ListTile(
                 leading: Icon(Icons.save, color: appTheme.deepPurple500),
@@ -216,7 +235,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                   style: CustomTextStyles.titleSmallDeeppurple500,
                 ),
               ),
-            ),
+            ),*/
           ],
         ),
       ],
@@ -231,6 +250,12 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
       selector: (state) => state.titleController,
       builder: (context, titleController) {
         return CustomFloatingTextField(
+          onChanged: (text) {
+            titleNotifier.value = text;
+            createMemoryButtonKey.currentState?.updateParameters(
+              title: text,
+            );
+          },
           controller: titleController,
           labelText: "lbl_title".tr,
           labelStyle: CustomTextStyles.titleLarge20_1,
@@ -264,97 +289,46 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
     );
   }
 
-  /// Section Widget
-  Widget _buildDate(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          "lbl_enter_dates".tr,
-          style: CustomTextStyles.titleLarge20,
+Widget _buildSelectDateRangeButton(BuildContext context) {
+    return CustomElevatedButton(
+      onPressed: () => _selectDateRange(context),
+      height: 35.v,
+      width: null,
+      decoration: null,
+      text: "Select Dates".tr,
+      leftIcon: Container(
+        margin: EdgeInsets.only(right: 8.h),
+        child: CustomImageView(
+          imagePath: ImageConstant.imgCalendar,
+          height: 18.adaptSize,
+          width: 18.adaptSize,
         ),
-        SizedBox(height: 8.v),
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: 24.h),
-          child: CustomImageView(
-            imagePath: ImageConstant.imgIconsToday24px,
-            height: 24.adaptSize,
-            width: 24.adaptSize,
-          ),
-        ),
-      ],
+      ),
+      buttonStyle: CustomButtonStyles.outlineBlackTL17,
+      buttonTextStyle: CustomTextStyles.titleSmallDeeppurple500,
     );
   }
 
-  /// Section Widget
-  Widget _buildDate1(BuildContext context) {
-    return BlocSelector<CreateMemoryBloc, CreateMemoryState,
-        TextEditingController?>(
-      selector: (state) => state.dateController1,
-      builder: (context, dateController1) {
-        return CustomFloatingTextField(
-          width: 137.h,
-          controller: dateController1,
-          labelText: "lbl_date".tr,
-          labelStyle: theme.textTheme.bodyLarge!,
-          hintText: "lbl_date".tr,
-          hintStyle: theme.textTheme.bodyLarge!,
-          contentPadding: EdgeInsets.fromLTRB(16.h, 19.v, 16.h, 17.v),
-        );
-      },
+void _selectDateRange(BuildContext context) async {
+    DateTimeRange? selectedRange = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(DateTime.now().year + 5),
     );
-  }
 
-  /// Section Widget
-  Widget _buildDate2(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 12.h,
-        top: 8.v,
-      ),
-      child: BlocSelector<CreateMemoryBloc, CreateMemoryState,
-          TextEditingController?>(
-        selector: (state) => state.dateController2,
-        builder: (context, dateController2) {
-          return CustomFloatingTextField(
-            width: 137.h,
-            controller: dateController2,
-            labelText: "lbl_end_date".tr,
-            labelStyle: CustomTextStyles.bodyLargeGray800_1,
-            hintText: "lbl_end_date".tr,
-            contentPadding: EdgeInsets.fromLTRB(16.h, 17.v, 16.h, 19.v),
-          );
-        },
-      ),
-    );
-  }
-
-  /// Section Widget
-  Widget _buildInputDatePicker(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(right: 6.h),
-      decoration: AppDecoration.fillWhiteA.copyWith(
-        borderRadius: BorderRadiusStyle.roundedBorder28,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildDate(context),
-          SizedBox(height: 9.v),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildDate1(context),
-                _buildDate2(context),
-              ],
-            ),
-          ),
-          SizedBox(height: 9.v),
-        ],
-      ),
-    );
+    if (selectedRange != null) {
+      // Handle the selected range, update your controllers or state accordingly
+      startDate = selectedRange.start;
+      endDate = selectedRange.end;
+      print(startDate);
+      print(endDate);
+      createMemoryButtonKey.currentState?.updateParameters(
+        startDate: startDate,
+        endDate: endDate,
+      );
+      datesNotifier.value =
+          "${startDate!.day}/${startDate!.month}/${startDate!.year} - ${endDate!.day}/${endDate!.month}/${endDate!.year}";
+    }
   }
 
   /// Section Widget
@@ -506,7 +480,9 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
               .copy('${appDir.path}/photos/$fileName');
           print(savedImage);
           imgList.add(savedImage.path);
-            print(imgList);
+          createMemoryButtonKey.currentState?.updateParameters(
+            images: imgList,
+          );
           imgListNotifier.value = imgList; // Its a file
         }
       },
@@ -553,6 +529,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
           ValueListenableBuilder<List<String>>(
             valueListenable: imgListNotifier,
             builder: (context, value, child) {
+              print("ImageCarousel rebuilt with imgList: $imgList");
               return ImageCarousel(imgList: value);
             },
           ),
@@ -619,7 +596,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                   ? Text("No recordings yet.")
                   : Column(
                       children: value
-                          .map((path) => _buildFileBox(File(path)))
+                          .map((path) => _buildRecordingBox(File(path)))
                           .toList(),
                     );
             },
@@ -629,7 +606,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
     );
   }
 
-  Widget _buildFileBox(File file) {
+  Widget _buildRecordingBox(File file) {
     return AudioPlayerWidget(
       audioPath: file.path,
       isAsset: false,
@@ -731,6 +708,9 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                           // Add the path to your list
                           
                             recordingPaths.add(recordingPath);
+                          createMemoryButtonKey.currentState?.updateParameters(
+                            recordings: recordingPaths,
+                          );
                           recordingsNotifier.value = recordingPaths;
                          
                         } else {
@@ -777,8 +757,115 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
       },
     );
   }
-}
 
+Widget _buildThumbnail(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // Handle thumbnail image selection
+        _showThumbnailOptions(context);
+      },
+      child: Container(
+        width: double.infinity,
+        height: 200.0, // You can adjust the size as needed
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: ValueListenableBuilder<File?>(
+          valueListenable: thumbnailNotifier,
+          builder: (context, thumbnailImage, child) {
+            return thumbnailImage != null
+                ? Stack(
+                    children: [
+                      Image.file(
+                        thumbnailImage,
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      Positioned(
+                        top: 8.0,
+                        right: 8.0,
+                        child: GestureDetector(
+                          onTap: () {
+                            thumbnailNotifier.value = null;
+                          },
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 20.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Center(
+                    child: Text(
+                      "Add Thumbnail",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  );
+          },
+        ),
+      ),
+    );
+  }
+
+  void _showThumbnailOptions(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Thumbnail Options"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context); // Close the options dialog
+                  _takePicture(ImageSource.camera);
+                },
+                child: Text('Take a Picture'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context); // Close the options dialog
+                  _takePicture(ImageSource.gallery);
+                },
+                child: Text('Pick from Gallery'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _takePicture(ImageSource source) async {
+    final picker = ImagePicker();
+    // ignore: deprecated_member_use
+    PickedFile? pickedFile = await picker.getImage(source: source);
+
+    if (pickedFile != null) {
+      final appDir = await pathProvider.getDownloadsDirectory();
+      bool appFolderExists = await Directory(appDir!.path + '/photos').exists();
+      if (!appFolderExists) {
+        final created =
+            await Directory(appDir.path + '/photos').create(recursive: true);
+        print(created.path);
+      }
+      final fileName = path.basename(pickedFile.path);
+      final savedImage =
+          await File(pickedFile.path).copy('${appDir.path}/photos/$fileName');
+      print(savedImage);
+      thumbnailImage = savedImage;
+      createMemoryButtonKey.currentState?.updateParameters(
+        thumbnail: thumbnailImage?.path,
+      );
+      thumbnailNotifier.value = savedImage;
+    }
+  }
+}
 abstract class RecorderConstants {
   static const amplitudeCaptureRateInMilliSeconds = 100;
 

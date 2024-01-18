@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:anamnesis/core/utils/navigator_service.dart';
 import 'package:anamnesis/routes/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -109,27 +111,58 @@ class _MapState extends State<MapWidget> {
     LatLng location = memory['location'];
     String thumbnail = memory['thumbnail'];
     int memId = memory['id'];
-    return Marker(
-        width: 30.0,
-        height: 30.0,
-        point: location,
-        child: GestureDetector(
-          onTap: () {
-            // Navigate to memory screen, normally passing the memory id as an argument
-            NavigatorService.pushNamed(
-              AppRoutes.memoryScreen,
-              arguments: memId,
-            );
-          },
-          child: ClipOval(
-            child: Container(
-              padding: EdgeInsets.all(2),
-              color: Colors.white,
-              child: ClipOval(
-                child: Image.asset(thumbnail, fit: BoxFit.cover),
+
+    Widget markerChild;
+    if (thumbnail.startsWith('assets/')) {
+      // Thumbnail is an asset
+      markerChild = GestureDetector(
+        onTap: () {
+          // Navigate to memory screen, normally passing the memory id as an argument
+          NavigatorService.pushNamed(
+            AppRoutes.memoryScreen,
+            arguments: memId,
+          );
+        },
+        child: ClipOval(
+          child: Container(
+            padding: EdgeInsets.all(2),
+            color: Colors.white,
+            child: ClipOval(
+              child: Image.asset(thumbnail, fit: BoxFit.cover),
+            ),
+          ),
+        ),
+      );
+    } else {
+      // Thumbnail is a file
+      markerChild = GestureDetector(
+        onTap: () {
+          // Navigate to memory screen, normally passing the memory id as an argument
+          NavigatorService.pushNamed(
+            AppRoutes.memoryScreen,
+            arguments: memId,
+          );
+        },
+        child: ClipOval(
+          child: Container(
+            padding: EdgeInsets.all(2),
+            color: Colors.white,
+            child: ClipOval(
+              child: Image.file(
+                File(thumbnail), // Assuming thumbnail is a file path
+                fit: BoxFit.cover,
               ),
             ),
           ),
-        ));
+        ),
+      );
+    }
+
+    return Marker(
+      width: 30.0,
+      height: 30.0,
+      point: location,
+      child: markerChild,
+    );
   }
 }

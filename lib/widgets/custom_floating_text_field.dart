@@ -28,9 +28,11 @@ class CustomFloatingTextField extends StatelessWidget {
     this.fillColor,
     this.filled = false,
     this.validator,
+    this.onChanged,
   }) : super(
           key: key,
         );
+  final void Function(String)? onChanged;
 
   final Alignment? alignment;
 
@@ -99,6 +101,7 @@ class CustomFloatingTextField extends StatelessWidget {
   Widget floatingTextFieldWidget(BuildContext context) => SizedBox(
         width: width ?? double.maxFinite,
         child: TextFormField(
+          onChanged: onChanged,
           scrollPadding:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           controller: controller,

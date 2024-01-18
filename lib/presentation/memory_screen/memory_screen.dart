@@ -56,7 +56,7 @@ class MemoryScreen extends StatelessWidget {
                           width: 215.h,
                           margin: EdgeInsets.only(left: 10.h),
                           child: Text(
-                              "${memoryModelObj.start_date}  to ${memoryModelObj.start_date},\n 📍${memoryModelObj.location}",
+                              "${memoryModelObj.start_date}  to ${memoryModelObj.end_date},\n 📍${memoryModelObj.location}",
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.bodyMedium!
