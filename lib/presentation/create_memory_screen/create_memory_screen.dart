@@ -7,7 +7,6 @@ import 'package:anamnesis/presentation/create_memory_screen/models/record_stat.d
 import 'package:anamnesis/presentation/create_memory_screen/widgets/create_memory_button.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
-import 'package:anamnesis/presentation/memory_screen/widgets/audio_player_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:anamnesis/presentation/home_list_screen/models/tag_carousel_model.dart';
 import 'bloc/create_memory_bloc.dart';
@@ -25,6 +24,7 @@ import 'package:image_picker/image_picker.dart';
 import 'models/people_list.dart';
 import '../home_list_screen/models/label_item_model.dart';
 import '../create_memory_screen/models/image_carousel.dart';
+import '../create_memory_screen/models/recordings_list.dart';
 import 'package:path/path.dart' as path;
 
 class CreateMemoryScreen extends StatefulWidget {
@@ -51,12 +51,12 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
   final ValueNotifier<String> titleNotifier = ValueNotifier<String>('');
   TextEditingController locationController = TextEditingController();
   List<String> recordingPaths = [];
-  final ValueNotifier<List<String>> recordingsNotifier =
-      ValueNotifier<List<String>>([]);
+  final GlobalKey<RecordingsListState> recordingsKey =
+      GlobalKey<RecordingsListState>();
   LatLng? myLocation;
   List<String> imgList = [];
-  final ValueNotifier<List<String>> imgListNotifier =
-      ValueNotifier<List<String>>([]);
+  final GlobalKey<ImageCarouselState> imageCarouselKey =
+      GlobalKey<ImageCarouselState>();
   List<String> journalList = [];
   final ValueNotifier<List<String>> journalNotifier =
       ValueNotifier<List<String>>([]);
@@ -483,7 +483,7 @@ void _selectDateRange(BuildContext context) async {
           createMemoryButtonKey.currentState?.updateParameters(
             images: imgList,
           );
-          imgListNotifier.value = imgList; // Its a file
+          imageCarouselKey.currentState?.updateImages(imgList: imgList);
         }
       },
       height: 35.v,
@@ -519,20 +519,14 @@ void _selectDateRange(BuildContext context) async {
                   bottom: 1.v,
                 ),
                 child: Text(
-                  "msg_photos_from_gallery".tr,
+                  "Photos".tr,
                   style: CustomTextStyles.titleLargeBlack900,
                 ),
               ),
               _buildAdd(context),
             ],
           ),
-          ValueListenableBuilder<List<String>>(
-            valueListenable: imgListNotifier,
-            builder: (context, value, child) {
-              print("ImageCarousel rebuilt with imgList: $imgList");
-              return ImageCarousel(imgList: value);
-            },
-          ),
+          ImageCarousel(key: imageCarouselKey, imgList: imgList),
         ],
       ),
     );
@@ -589,27 +583,12 @@ void _selectDateRange(BuildContext context) async {
             ],
           ),
           SizedBox(height: 10.v),
-          ValueListenableBuilder<List<String>>(
-            valueListenable: recordingsNotifier,
-            builder: (context, value, child) {
-              return value.isEmpty
-                  ? Text("No recordings yet.")
-                  : Column(
-                      children: value
-                          .map((path) => _buildRecordingBox(File(path)))
-                          .toList(),
-                    );
-            },
+          RecordingsList(
+            key: recordingsKey,
+            recordingsList: recordingPaths,
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildRecordingBox(File file) {
-    return AudioPlayerWidget(
-      audioPath: file.path,
-      isAsset: false,
     );
   }
 
@@ -711,7 +690,9 @@ void _selectDateRange(BuildContext context) async {
                           createMemoryButtonKey.currentState?.updateParameters(
                             recordings: recordingPaths,
                           );
-                          recordingsNotifier.value = recordingPaths;
+                          recordingsKey.currentState?.updateList(
+                            recordingPaths,
+                          );
                          
                         } else {
                           print('Recording failed');

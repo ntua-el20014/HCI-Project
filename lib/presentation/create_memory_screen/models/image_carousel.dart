@@ -2,14 +2,36 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'dart:io'; // Import for File class
 
-class ImageCarousel extends StatelessWidget {
-  final List<String> imgList;
+// ignore: must_be_immutable
+class ImageCarousel extends StatefulWidget {
+  List<String> imgList;
 
-  ImageCarousel({required this.imgList});
+  ImageCarousel({
+    Key? key,
+    required this.imgList,
+  }) : super(key: key);
+
+  @override
+  ImageCarouselState createState() => ImageCarouselState();
+}
+
+class ImageCarouselState extends State<ImageCarousel> {
+  List<String>? imgList;
+  void initState() {
+    super.initState();
+    imgList = widget.imgList;
+  }
+
+  void updateImages({List<String>? imgList}) {
+    setState(() {
+      
+      this.imgList = imgList ?? this.imgList;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (imgList.isEmpty) {
+    if (widget.imgList.isEmpty) {
       // Display a placeholder image when imgList is empty
       return Container(
         width: 100,
@@ -29,7 +51,7 @@ class ImageCarousel extends StatelessWidget {
         pageSnapping: false,
         viewportFraction: 0.65,
       ),
-      items: imgList
+      items: widget.imgList
           .map((item) => Container(
                 child: Center(
                   child: _buildImage(item),
