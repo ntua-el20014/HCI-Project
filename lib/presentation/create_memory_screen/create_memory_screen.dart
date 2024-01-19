@@ -5,6 +5,7 @@ import 'package:anamnesis/presentation/create_memory_screen/models/record_cubit.
 import 'package:anamnesis/presentation/create_memory_screen/models/record_stat.dart'
     as mem;
 import 'package:anamnesis/presentation/create_memory_screen/widgets/create_memory_button.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:permission_handler/permission_handler.dart';
@@ -289,7 +290,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
     );
   }
 
-Widget _buildSelectDateRangeButton(BuildContext context) {
+  Widget _buildSelectDateRangeButton(BuildContext context) {
     return CustomElevatedButton(
       onPressed: () => _selectDateRange(context),
       height: 35.v,
@@ -309,7 +310,7 @@ Widget _buildSelectDateRangeButton(BuildContext context) {
     );
   }
 
-void _selectDateRange(BuildContext context) async {
+  void _selectDateRange(BuildContext context) async {
     DateTimeRange? selectedRange = await showDateRangePicker(
       context: context,
       firstDate: DateTime.now(),
@@ -350,6 +351,7 @@ void _selectDateRange(BuildContext context) async {
       ),
     );
   }
+
   /// Section Widget
   Widget _buildAddPeople(BuildContext context, List<PeopleItemModel> people) {
     return Container(
@@ -685,15 +687,14 @@ void _selectDateRange(BuildContext context) async {
                         if (recordingPath != null) {
                           print('Recording saved to: $recordingPath');
                           // Add the path to your list
-                          
-                            recordingPaths.add(recordingPath);
+
+                          recordingPaths.add(recordingPath);
                           createMemoryButtonKey.currentState?.updateParameters(
                             recordings: recordingPaths,
                           );
                           recordingsKey.currentState?.updateList(
                             recordingPaths,
                           );
-                         
                         } else {
                           print('Recording failed');
                         }
@@ -739,7 +740,7 @@ void _selectDateRange(BuildContext context) async {
     );
   }
 
-Widget _buildThumbnail(BuildContext context) {
+  Widget _buildThumbnail(BuildContext context) {
     return GestureDetector(
       onTap: () {
         // Handle thumbnail image selection
@@ -847,6 +848,7 @@ Widget _buildThumbnail(BuildContext context) {
     }
   }
 }
+
 abstract class RecorderConstants {
   static const amplitudeCaptureRateInMilliSeconds = 100;
 
@@ -868,7 +870,6 @@ Future<void> checkAndRequestPermissions() async {
     print("Permissions not granted before recording.");
   }
 }
-
 
 // ignore: must_be_immutable
 class LocationInputWidget extends StatefulWidget {
@@ -903,6 +904,32 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
             scrollPadding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             controller: widget.locationController,
+            // This gets the text input and passes the corresponding coordinates to the CreateMemoryButton
+            onSubmitted: (localityName) async {
+              LatLng? coordinates = await _latlngFromPlacemark(localityName);
+              if (coordinates != null) {
+                print("Got coordinates: $coordinates");
+                widget.myLocation = coordinates;
+                widget.createMemoryButtonKey.currentState
+                    ?.updateParameters(location: widget.myLocation);
+                setState(() {
+                  widget.myLocation = widget.myLocation;
+                });
+
+                String locationName =
+                    await _placemarkFromLatlng(widget.myLocation!);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Location $locationName found')),
+                );
+                widget.locationController?.text = locationName;
+              } else {
+                widget.locationController?.text = '';
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Couldn't find this location")),
+                );
+              }
+            },
             decoration: InputDecoration(
               contentPadding: EdgeInsets.fromLTRB(13.h, 17.v, 13.h, 13.v),
               border: OutlineInputBorder(
@@ -933,9 +960,7 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
                   // Get current location
                   try {
                     Position position = await Geolocator.getCurrentPosition(
-                        desiredAccuracy: LocationAccuracy.high);
-                    String locationString =
-                        "${position.latitude}, ${position.longitude}";
+                        desiredAccuracy: LocationAccuracy.medium);
                     widget.myLocation =
                         LatLng(position.latitude, position.longitude);
                     print(widget.myLocation);
@@ -947,7 +972,8 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
                     });
 
                     // Update text controller with the current location
-                    widget.locationController?.text = locationString;
+                    widget.locationController?.text =
+                        await _placemarkFromLatlng(widget.myLocation!);
                   } catch (e) {
                     print("Error getting location: $e");
                   }
@@ -976,5 +1002,36 @@ class _LocationInputWidgetState extends State<LocationInputWidget> {
         ],
       ),
     );
+  }
+
+  Future<String> _placemarkFromLatlng(LatLng coordinates) async {
+    double latitude = coordinates.latitude;
+    double longitude = coordinates.longitude;
+
+    try {
+      // Get name
+      List<Placemark> locationNameCandidates =
+          await placemarkFromCoordinates(latitude, longitude);
+      String locationName = locationNameCandidates.first.locality.toString();
+
+      return locationName;
+    } catch (e) {
+      return 'Middle of nowhere';
+    }
+  }
+
+  Future<LatLng?> _latlngFromPlacemark(String placemark) async {
+    try {
+      List<Location> locations =
+          await GeocodingPlatform.instance.locationFromAddress(placemark);
+      if (locations.isNotEmpty) {
+        final Location pos = locations[0];
+        return LatLng(pos.latitude, pos.longitude);
+      }
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 }
