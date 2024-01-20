@@ -153,12 +153,18 @@ class CustomSearchView extends StatelessWidget {
             ),
         suffixIcon: suffix ??
             Container(
-              margin: EdgeInsets.fromLTRB(30.h, 16.v, 16.h, 16.v),
-              child: CustomImageView(
-                color: Colors.black,
-                imagePath: ImageConstant.imgSearch,
-                height: 24.adaptSize,
-                width: 24.adaptSize,
+              margin: EdgeInsets.fromLTRB(0.h, 0.v, 10.h, 0.v),
+              child: IconButton(
+                icon: CustomImageView(
+                  color: Colors.black,
+                  imagePath: ImageConstant.imgSearch,
+                  height: 24.adaptSize,
+                  width: 24.adaptSize,
+                ),
+                iconSize: 48,
+                onPressed: () {
+                  onSubmitted!(controller!.text);
+                },
               ),
             ),
         suffixIconConstraints: suffixConstraints ??
