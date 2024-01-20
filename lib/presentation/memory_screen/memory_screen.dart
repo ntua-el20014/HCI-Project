@@ -270,15 +270,39 @@ class MemoryScreen extends StatelessWidget {
                       itemCount: memoryModelObj?.images.length ?? 0,
                       itemBuilder: (context, index) {
                         String? imagePath = memoryModelObj?.images[index];
-                        return Container(
-                          padding: EdgeInsets.only(left: 5.h, right: 5.h),
-                          child: CustomImageView(
-                            imagePath: imagePath,
+                        return GestureDetector(
+                          onTap: () {
+                            _enlargeImage(context, imagePath!);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.only(left: 5.h, right: 5.h),
+                            child: CustomImageView(
+                              imagePath: imagePath,
+                            ),
                           ),
                         );
                       });
                 })),
       ],
+    );
+  }
+
+  void _enlargeImage(BuildContext context, String imagePath) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: FractionallySizedBox(
+            widthFactor: 1.2,
+            child: Container(
+              color: Colors.black.withOpacity(0.7),
+              child: CustomImageView(
+                imagePath: imagePath,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
