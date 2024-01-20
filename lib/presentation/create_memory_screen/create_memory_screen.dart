@@ -69,6 +69,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
   final ValueNotifier<String> datesNotifier = ValueNotifier<String>("");
   final ValueNotifier<File?> thumbnailNotifier = ValueNotifier<File?>(null);
   AudioPlayerController audioPlayerController = AudioPlayerController();
+  final FocusNode _titleFocusNode = FocusNode();
 
   Future<Map<String, dynamic>> _getFutureData() async {
     print("Getting future data...");
@@ -253,6 +254,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
       selector: (state) => state.titleController,
       builder: (context, titleController) {
         return CustomFloatingTextField(
+          focusNode: _titleFocusNode,
           onChanged: (text) {
             titleNotifier.value = text;
             createMemoryButtonKey.currentState?.updateParameters(
@@ -270,24 +272,31 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
 
   /// Section Widget
   Widget _buildTitle1(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(right: 6.h),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadiusStyle.customBorderTL4,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTitle(context),
-          SizedBox(height: 4.v),
-          Padding(
-            padding: EdgeInsets.only(left: 16.h),
-            child: Text(
-              "msg_add_a_title_to_your".tr,
-              style: CustomTextStyles.bodyMedium_1,
+    return GestureDetector(
+      onTap: (() {
+        _titleFocusNode.unfocus();
+        FocusManager.instance.primaryFocus?.unfocus();
+        ;
+      }),
+      child: Container(
+        margin: EdgeInsets.only(right: 6.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadiusStyle.customBorderTL4,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTitle(context),
+            SizedBox(height: 4.v),
+            Padding(
+              padding: EdgeInsets.only(left: 16.h),
+              child: Text(
+                "msg_add_a_title_to_your".tr,
+                style: CustomTextStyles.bodyMedium_1,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -968,118 +977,134 @@ class LocationInputWidget extends StatefulWidget {
 class _LocationInputWidgetState extends State<LocationInputWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(right: 6.h),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadiusStyle.customBorderTL4,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            autofocus: false,
-            maxLines: 1,
-            scrollPadding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            controller: widget.locationController,
-            // This gets the text input and passes the corresponding coordinates to the CreateMemoryButton
-            onSubmitted: (localityName) async {
-              LatLng? coordinates = await _latlngFromPlacemark(localityName);
-              if (coordinates != null) {
-                print("Got coordinates: $coordinates");
-                widget.myLocation = coordinates;
-                widget.createMemoryButtonKey.currentState
-                    ?.updateParameters(location: widget.myLocation);
-                setState(() {
-                  widget.myLocation = widget.myLocation;
-                });
-
-                String locationName =
-                    await _placemarkFromLatlng(widget.myLocation!);
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Location $locationName found')),
-                );
-                widget.locationController?.text = locationName;
-              } else {
-                widget.locationController?.text = '';
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Couldn't find this location")),
-                );
-              }
-            },
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.fromLTRB(13.h, 17.v, 13.h, 13.v),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: appTheme.blueGray100,
-                  width: 1,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: appTheme.blueGray100,
-                  width: 1,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4.h),
-                borderSide: BorderSide(
-                  color: appTheme.deepPurple500,
-                  width: 3,
-                ),
-              ),
-              isDense: true,
-              labelText: "lbl_location".tr,
-              labelStyle: CustomTextStyles.titleLarge20_1,
-              hintText: "lbl_location".tr,
-              suffixIcon: GestureDetector(
-                onTap: () async {
-                  // Get current location
-                  try {
-                    Position position = await Geolocator.getCurrentPosition(
-                        desiredAccuracy: LocationAccuracy.medium);
-                    widget.myLocation =
-                        LatLng(position.latitude, position.longitude);
-                    print(widget.myLocation);
-                    widget.createMemoryButtonKey.currentState?.updateParameters(
-                      location: widget.myLocation,
-                    );
-                    setState(() {
-                      widget.myLocation = widget.myLocation;
-                    });
-
-                    // Update text controller with the current location
-                    widget.locationController?.text =
-                        await _placemarkFromLatlng(widget.myLocation!);
-                  } catch (e) {
-                    print("Error getting location: $e");
-                  }
-                },
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 12.h),
-                  child: CustomImageView(
-                    color: appTheme.deepPurple500,
-                    imagePath: ImageConstant.imgContrastDeepPurple500,
-                    height: 24.adaptSize,
-                    width: 24.adaptSize,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        margin: EdgeInsets.only(right: 6.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadiusStyle.customBorderTL4,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              autofocus: false,
+              maxLines: 1,
+              scrollPadding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              controller: widget.locationController,
+              // This gets the text input and passes the corresponding coordinates to the CreateMemoryButton
+              onSubmitted: _onSubmitted,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.fromLTRB(13.h, 17.v, 13.h, 13.v),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: appTheme.blueGray100,
+                    width: 1,
                   ),
                 ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: appTheme.blueGray100,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4.h),
+                  borderSide: BorderSide(
+                    color: appTheme.deepPurple500,
+                    width: 3,
+                  ),
+                ),
+                isDense: true,
+                labelText: "Location name",
+                labelStyle: CustomTextStyles.titleLarge20_1,
+                hintText: "City, area, or region",
+                prefixIcon: InkWell(
+                  borderRadius: BorderRadius.circular(50.h),
+                  onTap: () async {
+                    // Get current location
+                    try {
+                      Position position = await Geolocator.getCurrentPosition(
+                          desiredAccuracy: LocationAccuracy.medium);
+                      widget.myLocation =
+                          LatLng(position.latitude, position.longitude);
+                      print(widget.myLocation);
+                      widget.createMemoryButtonKey.currentState
+                          ?.updateParameters(
+                        location: widget.myLocation,
+                      );
+                      setState(() {
+                        widget.myLocation = widget.myLocation;
+                      });
+
+                      // Update text controller with the current location
+                      widget.locationController?.text =
+                          await _placemarkFromLatlng(widget.myLocation!);
+                    } catch (e) {
+                      print("Error getting location: $e");
+                    }
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 12.h),
+                    child: CustomImageView(
+                      color: appTheme.deepPurple500,
+                      imagePath: ImageConstant.imgContrastDeepPurple500,
+                      height: 24.adaptSize,
+                      width: 24.adaptSize,
+                    ),
+                  ),
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.send),
+                  color: Colors.deepPurple,
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    _onSubmitted(widget.locationController!.text);
+                  },
+                ),
+              ),
+              textInputAction: TextInputAction.done,
+            ),
+            SizedBox(height: 4.v),
+            Padding(
+              padding: EdgeInsets.only(left: 16.h),
+              child: Text(
+                "msg_search_or_pick_your".tr,
+                // style: CustomTextStyles.bodyMedium_1,
               ),
             ),
-            textInputAction: TextInputAction.done,
-          ),
-          SizedBox(height: 4.v),
-          Padding(
-            padding: EdgeInsets.only(left: 16.h),
-            child: Text(
-              "msg_search_or_pick_your".tr,
-              // style: CustomTextStyles.bodyMedium_1,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  void _onSubmitted(localityName) async {
+    LatLng? coordinates = await _latlngFromPlacemark(localityName);
+    if (coordinates != null) {
+      print("Got coordinates: $coordinates");
+      widget.myLocation = coordinates;
+      widget.createMemoryButtonKey.currentState
+          ?.updateParameters(location: widget.myLocation);
+      setState(() {
+        widget.myLocation = widget.myLocation;
+      });
+
+      String locationName = await _placemarkFromLatlng(widget.myLocation!);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Location $locationName found')),
+      );
+      widget.locationController?.text = locationName;
+    } else {
+      widget.locationController?.text = '';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Couldn't find this location")),
+      );
+    }
   }
 
   Future<String> _placemarkFromLatlng(LatLng coordinates) async {
