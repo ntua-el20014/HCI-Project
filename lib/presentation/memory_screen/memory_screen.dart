@@ -76,6 +76,7 @@ class MemoryScreen extends StatelessWidget {
                       SizedBox(height: 18.v),
                       _buildPhotos(context),
                       SizedBox(height: 17.v),
+                      /*
                       Padding(
                           padding: EdgeInsets.only(left: 10.h),
                           child: Text("lbl_your_journey".tr,
@@ -100,6 +101,7 @@ class MemoryScreen extends StatelessWidget {
                       _buildJournal(context),
                       _buildJournalCarousel(context),
                       SizedBox(height: 15.v),
+                      */
                       _buildRecordings(context),
                     ],
                   ),

@@ -123,17 +123,17 @@ class CreateMemoryButtonState extends State<CreateMemoryButton> {
   }
 
   Future<void> _onCreateMemoryButtonPressed(BuildContext context) async {
-    print(title);
-    print(thumbnail);
-    print(startDate);
-    print(endDate);
-    print(location);
-    print(userTrip);
-    print(trackLocation);
-    print(images);
-    print(journalPages);
-    print(recordings);
-    print(tags);
+    print("Title: $title");
+    print("Thumbnail: $thumbnail");
+    print("StartDate: $startDate");
+    print("EndDate: $endDate");
+    print("Location: $location");
+    print("UserTrip: $userTrip");
+    print("TrackLocation: $trackLocation");
+    print("Images: $images");
+    print("JournalPages: $journalPages");
+    print("Recordings: $recordings");
+    print("Tags: $tags");
     print(people!.map((person) => person.name!).toList());
 
     if (_checkIfMemoryIsValid()) {

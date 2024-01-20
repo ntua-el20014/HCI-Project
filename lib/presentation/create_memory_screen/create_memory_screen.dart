@@ -59,8 +59,8 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
   final GlobalKey<ImageCarouselState> imageCarouselKey =
       GlobalKey<ImageCarouselState>();
   List<String> journalList = [];
-  final ValueNotifier<List<String>> journalNotifier =
-      ValueNotifier<List<String>>([]);
+  final GlobalKey<ImageCarouselState> journalCarouselKey =
+      GlobalKey<ImageCarouselState>();
   final List<LabelItemModel> selectedTags = [];
   List<PeopleItemModel> mySelectedPeople = [];
   File? thumbnailImage;
@@ -152,8 +152,10 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                     SizedBox(height: 30.v),
                     _buildPhotos(context),
                     SizedBox(height: 30.v),
+                    /*
                     _buildJournals(context),
                     SizedBox(height: 30.v),
+                    */
                     _buildRecordings(context),
                     CreateMemoryButton(
                       key: createMemoryButtonKey,
@@ -313,7 +315,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
   void _selectDateRange(BuildContext context) async {
     DateTimeRange? selectedRange = await showDateRangePicker(
       context: context,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(DateTime.now().year - 5),
       lastDate: DateTime(DateTime.now().year + 5),
     );
 
@@ -534,6 +536,82 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
     );
   }
 
+  Widget _buildAddJournal(BuildContext context) {
+    return CustomElevatedButton(
+      onPressed: () async {
+        final picker = ImagePicker();
+        PickedFile? pickedFile;
+
+        // Let the user choose between taking a new picture or picking from gallery
+        final action = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Add a new journal page'),
+              content: Text('Choose an option'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Take a Picture'),
+                  onPressed: () {
+                    Navigator.pop(context, 'Take a Picture');
+                  },
+                ),
+                TextButton(
+                  child: Text('Pick from Gallery'),
+                  onPressed: () {
+                    Navigator.pop(context, 'Pick from Gallery');
+                  },
+                ),
+              ],
+            );
+          },
+        );
+
+        if (action == 'Take a Picture') {
+          // ignore: deprecated_member_use
+          pickedFile = await picker.getImage(source: ImageSource.camera);
+        } else if (action == 'Pick from Gallery') {
+          // ignore: deprecated_member_use
+          pickedFile = await picker.getImage(source: ImageSource.gallery);
+        }
+
+        if (pickedFile != null) {
+          final appDir = await pathProvider.getDownloadsDirectory();
+          bool appFolderExists =
+              await Directory(appDir!.path + '/photos').exists();
+          if (!appFolderExists) {
+            final created = await Directory(appDir.path + '/photos')
+                .create(recursive: true);
+            print(created.path);
+          }
+          final fileName = path.basename(pickedFile.path);
+          final savedImage = await File(pickedFile.path)
+              .copy('${appDir.path}/photos/$fileName');
+          print(savedImage);
+          journalList.add(savedImage.path);
+          createMemoryButtonKey.currentState?.updateParameters(
+            journalPages: journalList,
+          );
+          journalCarouselKey.currentState?.updateImages(imgList: journalList);
+        }
+      },
+      height: 35.v,
+      width: 75.h,
+      decoration: null,
+      text: "lbl_add".tr,
+      leftIcon: Container(
+        margin: EdgeInsets.only(right: 8.h),
+        child: CustomImageView(
+          imagePath: ImageConstant.imgPlus,
+          height: 18.adaptSize,
+          width: 18.adaptSize,
+        ),
+      ),
+      buttonStyle: CustomButtonStyles.outlineBlackTL17,
+      buttonTextStyle: CustomTextStyles.titleSmallDeeppurple500,
+    );
+  }
+  
   Widget _buildJournals(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.h),
@@ -553,10 +631,10 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
                   style: CustomTextStyles.titleLargeBlack900,
                 ),
               ),
-              _buildAdd(context),
+              _buildAddJournal(context),
             ],
           ),
-          ImageCarousel(imgList: journalList)
+          ImageCarousel(key: journalCarouselKey, imgList: journalList)
         ],
       ),
     );
