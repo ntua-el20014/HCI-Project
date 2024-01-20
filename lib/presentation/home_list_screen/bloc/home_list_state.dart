@@ -6,31 +6,46 @@ part of 'home_list_bloc.dart';
 class HomeListState extends Equatable {
   HomeListState({
     this.searchController,
-    this.tagController,
+    //this.tagController,
     this.homeListModelObj,
   });
 
   TextEditingController? searchController;
 
-  TextEditingController? tagController;
+  //TextEditingController? tagController;
 
   HomeListModel? homeListModelObj;
 
   @override
   List<Object?> get props => [
         searchController,
-        tagController,
+        //tagController,
         homeListModelObj,
       ];
   HomeListState copyWith({
     TextEditingController? searchController,
-    TextEditingController? tagController,
+    //TextEditingController? tagController,
     HomeListModel? homeListModelObj,
   }) {
     return HomeListState(
       searchController: searchController ?? this.searchController,
-      tagController: tagController ?? this.tagController,
+      //tagController: tagController ?? this.tagController,
       homeListModelObj: homeListModelObj ?? this.homeListModelObj,
     );
   }
+}
+
+class FilterMemoriesEvent extends HomeListEvent {
+  final String searchText;
+  final List<PeopleItemModel> selectedPeople;
+  final List<int> selectedTags;
+
+  FilterMemoriesEvent({
+    required this.searchText,
+    required this.selectedPeople,
+    required this.selectedTags,
+  });
+
+  @override
+  List<Object?> get props => [searchText, selectedPeople, selectedTags];
 }

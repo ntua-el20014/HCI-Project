@@ -8,7 +8,7 @@ import 'package:anamnesis/core/app_export.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_leading_image.dart';
 import 'package:anamnesis/widgets/app_bar/appbar_subtitle.dart';
 import 'package:anamnesis/widgets/app_bar/custom_app_bar.dart';
-import 'package:anamnesis/widgets/custom_switch.dart';
+//import 'package:anamnesis/widgets/custom_switch.dart';
 
 class MemoryScreen extends StatelessWidget {
   final int memId;
@@ -283,7 +283,7 @@ class MemoryScreen extends StatelessWidget {
   }
 
   /// Section Widget
-  Widget _buildTrackSwitch(BuildContext context) {
+  /*Widget _buildTrackSwitch(BuildContext context) {
     return Align(
         alignment: Alignment.center,
         child: Padding(
@@ -340,7 +340,7 @@ class MemoryScreen extends StatelessWidget {
               width: 122.h,
               radius: BorderRadius.circular(28.h))
         ]));
-  }
+  }*/
 
   /// Section Widget
   Widget _buildRecordings(BuildContext context) {

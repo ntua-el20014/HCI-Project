@@ -26,10 +26,13 @@ class CustomSearchView extends StatelessWidget {
     this.filled = true,
     this.validator,
     this.onChanged,
+    this.onSubmitted,
     this.hasShadow = false,
   }) : super(
           key: key,
         );
+
+  final void Function(String)? onSubmitted;
 
   final Alignment? alignment;
 
@@ -71,7 +74,7 @@ class CustomSearchView extends StatelessWidget {
 
   final FormFieldValidator<String>? validator;
 
-  final Function(String)? onChanged;
+  final void Function(String)? onChanged;
 
   final bool hasShadow;
 
@@ -113,9 +116,8 @@ class CustomSearchView extends StatelessWidget {
             textInputAction: TextInputAction.none,
             decoration: decoration(context),
             validator: validator,
-            onChanged: (String value) {
-              onChanged!.call(value);
-            },
+            onChanged: onChanged,
+            onFieldSubmitted: onSubmitted,
           ),
         ),
       );

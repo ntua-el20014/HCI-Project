@@ -178,18 +178,18 @@ class DatabaseHelper {
     // duration filter
     String durationWhere = (duration == null)
         ? ""
-        : "AND memory.end_date BETWEEN memory.start_date AND date(memory.start_date, '+${duration} day')";
+        : "AND memory.end_date BETWEEN memory.start_date AND date(memory.start_date, '+$duration day')";
 
     String query = '''
       SELECT memory.*
       FROM memory
-      ${tagsJoin}
-      ${peopleJoin}
-      WHERE memory.title LIKE '%${title}%'
-      ${tagsWhere}
-      ${peopleWhere}
-      ${dateWhere}
-      ${durationWhere}
+      $tagsJoin
+      $peopleJoin
+      WHERE memory.title LIKE '%$title%'
+      $tagsWhere
+      $peopleWhere
+      $dateWhere
+      $durationWhere
       GROUP BY memory.id
       ''';
 
@@ -256,7 +256,7 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> tagMaps = await db.rawQuery('''
       SELECT tag.id, tag.label
       FROM tag JOIN memory_tags ON tag.id = memory_tags.tag_id
-      WHERE memory_tags.memory_id = ${id}
+      WHERE memory_tags.memory_id = $id
     ''');
     memory['tags'] = tagMaps;
 
@@ -264,7 +264,7 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> personMaps = await db.rawQuery('''
       SELECT person.id, person.name
       FROM person JOIN memory_people ON person.id = memory_people.person_id
-      WHERE memory_people.memory_id = ${id}
+      WHERE memory_people.memory_id = $id
     ''');
     memory['people'] = personMaps;
 

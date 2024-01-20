@@ -1,3 +1,4 @@
+import 'package:anamnesis/presentation/create_memory_screen/models/people_list.dart';
 import 'package:anamnesis/presentation/home_list_screen/models/tag_carousel_model.dart';
 import '../home_list_screen/widgets/homelist_item_widget.dart';
 import 'widgets/permission_request.dart';
@@ -33,16 +34,25 @@ final List<LabelItemModel> filters = [
   ),
 ];
 
-class HomeListScreen extends StatelessWidget {
+class HomeListScreen extends StatefulWidget {
   const HomeListScreen({Key? key}) : super(key: key);
 
   static Widget builder(BuildContext context) {
     return BlocProvider<HomeListBloc>(
-        create: (context) =>
-            HomeListBloc(HomeListState(homeListModelObj: HomeListModel()))
-              ..add(HomeListInitialEvent()),
-        child: HomeListScreen());
+      create: (context) =>
+          HomeListBloc(HomeListState(homeListModelObj: HomeListModel()))
+            ..add(HomeListInitialEvent()),
+      child: HomeListScreen(),
+    );
   }
+
+  @override
+  _HomeListScreenState createState() => _HomeListScreenState();
+}
+
+class _HomeListScreenState extends State<HomeListScreen> {
+  final List<int> selectedTags = [];
+  final List<PeopleItemModel> selectedPeople = [];
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +101,20 @@ class HomeListScreen extends StatelessWidget {
                     return CustomSearchView(
                         autofocus: false,
                         controller: searchController,
-                        hintText: "lbl_find_a_memory".tr);
+                      hintText: "lbl_find_a_memory".tr,
+                      onChanged: (value) {},
+                      onSubmitted: (value) {
+                        context.read<HomeListBloc>().add(
+                              FilterMemoriesEvent(
+                                searchText: searchController?.text ?? '',
+                                selectedPeople: selectedPeople,
+                                selectedTags: selectedTags,
+                              ),
+                            );
+                      },
+                    );
+                        
+
                   }),
               SizedBox(
                 width: double.maxFinite,

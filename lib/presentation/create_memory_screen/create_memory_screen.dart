@@ -536,7 +536,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
     );
   }
 
-  Widget _buildAddJournal(BuildContext context) {
+  /*Widget _buildAddJournal(BuildContext context) {
     return CustomElevatedButton(
       onPressed: () async {
         final picker = ImagePicker();
@@ -638,7 +638,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
         ],
       ),
     );
-  }
+  }*/
 
   Widget _buildRecordings(BuildContext context) {
     return Padding(
