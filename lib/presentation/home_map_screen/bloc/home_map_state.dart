@@ -6,29 +6,29 @@ part of 'home_map_bloc.dart';
 class HomeMapState extends Equatable {
   HomeMapState({
     this.searchController,
-    this.tagController,
+    //this.tagController,
     this.homeMapModelObj,
   });
 
   TextEditingController? searchController;
 
-  TextEditingController? tagController;
+  //TextEditingController? tagController;
 
   HomeMapModel? homeMapModelObj;
 
   @override
   List<Object?> get props => [
         searchController,
-        tagController,
+        //tagController,
         homeMapModelObj,
       ];
   HomeMapState copyWith(
       {TextEditingController? searchController,
-      TextEditingController? tagController,
+      //TextEditingController? tagController,
       HomeMapModel? homeMapModelObj}) {
     return HomeMapState(
       searchController: searchController ?? this.searchController,
-      tagController: tagController ?? this.tagController,
+      //tagController: tagController ?? this.tagController,
       homeMapModelObj: homeMapModelObj ?? this.homeMapModelObj,
     );
   }

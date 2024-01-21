@@ -1,19 +1,32 @@
 import 'package:anamnesis/database/database.dart';
 import 'package:anamnesis/presentation/create_memory_screen/models/people_list.dart';
+import 'package:anamnesis/presentation/home_list_screen/bloc/home_list_bloc.dart';
 import 'bloc/people_picker_bloc.dart';
 import 'models/people_picker_model.dart';
 import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
 class PeoplePickerBottomsheet extends StatefulWidget {
-  const PeoplePickerBottomsheet({Key? key}) : super(key: key);
+  final void Function(List<PeopleItemModel>)? onPeopleSelected;
+  const PeoplePickerBottomsheet({this.onPeopleSelected, Key? key})
+      : super(key: key);
+  
 
   static Widget builder(BuildContext context) {
-    return BlocProvider<PeoplePickerBloc>(
-      create: (context) => PeoplePickerBloc(PeoplePickerState(
-        peoplePickerModelObj: PeoplePickerModel(),
-      ))
-        ..add(PeoplePickerInitialEvent()),
-      child: PeoplePickerBottomsheet(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<PeoplePickerBloc>(
+          create: (context) => PeoplePickerBloc(PeoplePickerState(
+            peoplePickerModelObj: PeoplePickerModel(),
+          ))
+            ..add(PeoplePickerInitialEvent()),
+        ),
+        BlocProvider<HomeListBloc>(
+          create: (context) => HomeListBloc(HomeListState()),
+        ),
+      ],
+      child: PeoplePickerBottomsheet(
+        onPeopleSelected: ((List<PeopleItemModel> newSelectedPeople) {}),
+      ),
     );
   }
 
@@ -109,28 +122,63 @@ class _PeoplePickerBottomsheetState extends State<PeoplePickerBottomsheet> {
     );
   }
 
-  Widget _buildAddPeople(BuildContext context, List<PeopleItemModel> people) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 16.0),
-            child: Text(
-              "lbl_add_people".tr,
-              style: CustomTextStyles.titleLargeBlack900,
-            ),
+  Widget _buildAddPeople(
+    BuildContext context,
+    List<PeopleItemModel> people,
+  ) {
+    return BlocBuilder<HomeListBloc, HomeListState>(
+      builder: (context, homeListState) {
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Text(
+                  "lbl_add_people".tr,
+                  style: CustomTextStyles.titleLargeBlack900,
+                ),
+              ),
+              SizedBox(height: 13.v),
+              PeopleList(
+                people: people,
+                onSelectionChanged: (selectedPeople) {
+                  mySelectedPeople = selectedPeople;
+                },
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Access existing filters from HomeListState
+                    String existingSearchText =
+                        homeListState.existingSearchText ?? '';
+                    List<int> existingSelectedTags =
+                        homeListState.existingSelectedTags ?? [];
+                    List<DateTime> existingDate =
+                        homeListState.existingDate ?? [];
+                    int? existingDuration = homeListState.existingDuration;
+
+                    // Call the FilterMemoriesEvent with existing filters and selectedPeople
+                    context.read<HomeListBloc>().add(
+                          FilterMemoriesEvent(
+                            searchText: existingSearchText,
+                            selectedPeople: mySelectedPeople,
+                            selectedTags: existingSelectedTags,
+                            date: existingDate,
+                            duration: existingDuration,
+                          ),
+                        );
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Submit"),
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 13.v),
-          PeopleList(
-            people: people,
-            onSelectionChanged: (selectedPeople) {
-              mySelectedPeople = selectedPeople;
-              print(mySelectedPeople.map((person) => person.name!).toList());
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
-  }
+}
+
 }

@@ -39,8 +39,10 @@ class HomeListScreen extends StatefulWidget {
 
   static Widget builder(BuildContext context) {
     return BlocProvider<HomeListBloc>(
-      create: (context) =>
-          HomeListBloc(HomeListState(homeListModelObj: HomeListModel()))
+      create: (context) => HomeListBloc(HomeListState(
+        searchController: TextEditingController(),
+        homeListModelObj: HomeListModel(),
+      ))
             ..add(HomeListInitialEvent()),
       child: HomeListScreen(),
     );
@@ -52,7 +54,9 @@ class HomeListScreen extends StatefulWidget {
 
 class _HomeListScreenState extends State<HomeListScreen> {
   final List<int> selectedTags = [];
-  final List<PeopleItemModel> selectedPeople = [];
+  List<PeopleItemModel> selectedPeople = [];
+  final List<DateTime> date = [];
+  final int? duration = null;
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +113,8 @@ class _HomeListScreenState extends State<HomeListScreen> {
                                 searchText: searchController?.text ?? '',
                                 selectedPeople: selectedPeople,
                                 selectedTags: selectedTags,
+                                date: date,
+                                duration: duration,
                               ),
                             );
                       },
@@ -198,7 +204,6 @@ class _HomeListScreenState extends State<HomeListScreen> {
       ),
     );
   }
-}
 
 Widget _buildLabelCarousel(BuildContext context, List<LabelItemModel> filters) {
   return TagCarousel(
@@ -210,3 +215,6 @@ Widget _buildLabelCarousel(BuildContext context, List<LabelItemModel> filters) {
     },
   );
 }
+}
+
+

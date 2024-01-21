@@ -17,6 +17,7 @@ class HomeMapBloc extends Bloc<HomeMapEvent, HomeMapState> {
   ) async {
     emit(state.copyWith(
         searchController: TextEditingController(),
-        tagController: TextEditingController()));
+      //tagController: TextEditingController()
+    ));
   }
 }

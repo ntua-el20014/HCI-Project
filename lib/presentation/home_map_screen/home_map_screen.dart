@@ -1,3 +1,4 @@
+import 'package:anamnesis/presentation/create_memory_screen/models/people_list.dart';
 import 'bloc/home_map_bloc.dart';
 import 'models/home_map_model.dart';
 import 'widgets/map.dart';
@@ -26,6 +27,11 @@ final List<LabelItemModel> labels = [
 // ignore_for_file: must_be_immutable
 class HomeMapScreen extends StatelessWidget {
   HomeMapScreen({Key? key}) : super(key: key);
+  final List<int> selectedTags = [];
+  final List<PeopleItemModel> selectedPeople = [];
+  final List<DateTime> date = [];
+  final int? duration = null;
+
   static Widget builder(BuildContext context) {
     return BlocProvider<HomeMapBloc>(
         create: (context) =>
@@ -71,7 +77,8 @@ class HomeMapScreen extends StatelessWidget {
                         hasShadow: true,
                         autofocus: false,
                         controller: searchController,
-                        hintText: "lbl_find_a_memory".tr);
+                      hintText: "lbl_find_a_memory".tr,
+                    );
                   }),
               SizedBox(
                 width: double.maxFinite,

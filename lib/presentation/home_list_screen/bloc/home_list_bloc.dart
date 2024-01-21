@@ -73,17 +73,19 @@ class HomeListBloc extends Bloc<HomeListEvent, HomeListState> {
     Future<List<HomelistItemModel>> fetchMemoriesBasedOnFilters(
         String? searchText,
         List<PeopleItemModel> selectedPeople,
-        List<int> selectedTags) async {
+        List<int> selectedTags,
+        List<DateTime> date,
+        int? duration) async {
+      print("selectedPeople: $selectedPeople");
       List<HomelistItemModel> homeList = [];
       DatabaseHelper dbHelp = DatabaseHelper();
       List<Map<String, dynamic>> memories = await dbHelp.getMemories(
         title: searchText,
         tags: selectedTags,
         people: selectedPeople.map((e) => e.id!).toList(),
-        date: null, //placeholder
-        duration: null, //placeholder
+        date: date,
+        duration: duration,
       );
-      print("memories are: $memories");
       for (int i = 0; i < memories.length; i++) {
         String dateOnly =
             "${memories[i]['start_date'].day}/${memories[i]['start_date'].month}/${memories[i]['start_date'].year}";
@@ -98,8 +100,7 @@ class HomeListBloc extends Bloc<HomeListEvent, HomeListState> {
           supportingText: placemark,
         ));
       }
-      print("new homelist is: $homeList");
-
+      print("filtering done...");
       return homeList;
     }
 
@@ -108,10 +109,9 @@ class HomeListBloc extends Bloc<HomeListEvent, HomeListState> {
       event.searchText,
       event.selectedPeople,
       event.selectedTags,
+      event.date,
+      event.duration,
     );
-    print(
-        "${event.searchText} AND ${event.selectedPeople} AND ${event.selectedTags}");
-    print("filtered memories are: $filteredMemories");
     // Update the state with the filtered memories
     emit(
       state.copyWith(
