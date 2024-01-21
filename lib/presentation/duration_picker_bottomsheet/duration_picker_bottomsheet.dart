@@ -8,10 +8,12 @@ import 'package:anamnesis/core/app_export.dart';
 
 class DurationPickerBottomsheet extends StatefulWidget {
   final void Function(List<PeopleItemModel>)? onPeopleSelected;
-  const DurationPickerBottomsheet({this.onPeopleSelected, Key? key})
+  final HomeListBloc homeListBloc;
+  const DurationPickerBottomsheet(
+      {required this.homeListBloc, this.onPeopleSelected, Key? key})
       : super(key: key);
 
-  static Widget builder(BuildContext context) {
+  Widget builder(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<DurationPickerBloc>(
@@ -20,11 +22,10 @@ class DurationPickerBottomsheet extends StatefulWidget {
           ))
             ..add(DurationPickerInitialEvent()),
         ),
-        BlocProvider<HomeListBloc>(
-          create: (context) => HomeListBloc(HomeListState()),
-        ),
+        BlocProvider.value(value: homeListBloc)
       ],
       child: DurationPickerBottomsheet(
+        homeListBloc: homeListBloc,
         onPeopleSelected: ((List<PeopleItemModel> newSelectedPeople) {}),
       ),
     );
@@ -36,7 +37,9 @@ class DurationPickerBottomsheet extends StatefulWidget {
 }
 
 class _DurationPickerBottomsheetState extends State<DurationPickerBottomsheet> {
-  IntegerInput integerInput = IntegerInput();
+  
+  final GlobalKey<_IntegerInputState> integerInputKey =
+      GlobalKey<_IntegerInputState>();
 
   @override
   void initState() {
@@ -45,6 +48,8 @@ class _DurationPickerBottomsheetState extends State<DurationPickerBottomsheet> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<HomeListBloc, HomeListState>(
+        builder: (context, homeListState) {
     return SafeArea(
         child: Container(
       width: 363.h,
@@ -86,7 +91,7 @@ class _DurationPickerBottomsheetState extends State<DurationPickerBottomsheet> {
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 10.v),
-              integerInput,
+                IntegerInput(key: integerInputKey),
               SizedBox(height: 20.v),
               Text(
                 "days",
@@ -97,10 +102,24 @@ class _DurationPickerBottomsheetState extends State<DurationPickerBottomsheet> {
           SizedBox(height: 66.v),
           ElevatedButton(
             onPressed: () {
-              // Nick, this is yours
-              print("Selected a duration of up to ... days");
-              print(
-                  "in '...' there should be the value of the integer input, but I couldn't figure out how to get it and I am already late");
+                String existingSearchText =
+                    homeListState.existingSearchText ?? '';
+                List<int> existingSelectedTags =
+                    homeListState.existingSelectedTags ?? [];
+                List<DateTime> existingDate = homeListState.existingDate ?? [];
+                List<PeopleItemModel> existingSelectedPeople =
+                    homeListState.existingSelectedPeople ?? [];
+                int duration = integerInputKey.currentState!.getCurrentValue();
+                context.read<HomeListBloc>().add(
+                      FilterMemoriesEvent(
+                        searchText: existingSearchText,
+                        selectedPeople: existingSelectedPeople,
+                        selectedTags: existingSelectedTags,
+                        date: existingDate,
+                        duration: duration,
+                      ),
+                    );
+                Navigator.of(context).pop();
             },
             child: Text("Submit"),
           ),
@@ -108,15 +127,21 @@ class _DurationPickerBottomsheetState extends State<DurationPickerBottomsheet> {
       ),
     ));
   }
+    );
+  }
 }
 
 class IntegerInput extends StatefulWidget {
+  IntegerInput({Key? key}) : super(key: key);
   @override
   _IntegerInputState createState() => _IntegerInputState();
 }
 
 class _IntegerInputState extends State<IntegerInput> {
   TextEditingController controller = TextEditingController(text: '0');
+  int getCurrentValue() {
+    return int.tryParse(controller.text) ?? 0;
+  }
 
   @override
   Widget build(BuildContext context) {

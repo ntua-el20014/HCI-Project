@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:anamnesis/core/app_export.dart';
 class PeoplePickerBottomsheet extends StatefulWidget {
   final void Function(List<PeopleItemModel>)? onPeopleSelected;
-  const PeoplePickerBottomsheet({this.onPeopleSelected, Key? key})
+  final HomeListBloc homeListBloc;
+  const PeoplePickerBottomsheet(
+      {required this.homeListBloc, this.onPeopleSelected, Key? key})
       : super(key: key);
   
 
-  static Widget builder(BuildContext context) {
+  Widget builder(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<PeoplePickerBloc>(
@@ -20,11 +22,10 @@ class PeoplePickerBottomsheet extends StatefulWidget {
           ))
             ..add(PeoplePickerInitialEvent()),
         ),
-        BlocProvider<HomeListBloc>(
-          create: (context) => HomeListBloc(HomeListState()),
-        ),
+        BlocProvider.value(value: homeListBloc)
       ],
       child: PeoplePickerBottomsheet(
+        homeListBloc: homeListBloc,
         onPeopleSelected: ((List<PeopleItemModel> newSelectedPeople) {}),
       ),
     );
