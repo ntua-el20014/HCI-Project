@@ -102,7 +102,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
               },
               value: (position.inMilliseconds > 0 &&
                       totalDuration.inMilliseconds > 0)
-                  ? position.inMilliseconds / totalDuration.inMilliseconds
+                  ? (position.inMilliseconds / totalDuration.inMilliseconds)
+                      .clamp(0.0, 1.0)
                   : 0.0,
             ),
           ),
