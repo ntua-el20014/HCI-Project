@@ -43,7 +43,7 @@ class HomeListScreen extends StatefulWidget {
         searchController: TextEditingController(),
         homeListModelObj: HomeListModel(),
       ))
-            ..add(HomeListInitialEvent()),
+        ..add(HomeListInitialEvent()),
       child: HomeListScreen(),
     );
   }
@@ -103,8 +103,8 @@ class _HomeListScreenState extends State<HomeListScreen> {
                   selector: (state) => state.searchController,
                   builder: (context, searchController) {
                     return CustomSearchView(
-                        autofocus: false,
-                        controller: searchController,
+                      autofocus: false,
+                      controller: searchController,
                       hintText: "lbl_find_a_memory".tr,
                       onChanged: (value) {},
                       onSubmitted: (value) {
@@ -119,8 +119,6 @@ class _HomeListScreenState extends State<HomeListScreen> {
                             );
                       },
                     );
-                        
-
                   }),
               SizedBox(
                 width: double.maxFinite,
@@ -205,16 +203,15 @@ class _HomeListScreenState extends State<HomeListScreen> {
     );
   }
 
-Widget _buildLabelCarousel(BuildContext context, List<LabelItemModel> filters) {
-  return TagCarousel(
-    labels: filters,
-    carouselType: CarouselType.FilterEditor,
-    onLabelTap: (selectedFilter) {
-      print('Selected Filter: ${selectedFilter.label}');
-      // You can add more logic here based on the selected filter
-    },
-  );
+  Widget _buildLabelCarousel(
+      BuildContext context, List<LabelItemModel> filters) {
+    return TagCarousel(
+      labels: filters,
+      carouselType: CarouselType.FilterEditor,
+      onLabelTap: (selectedFilter) {
+        print('Selected Filter: ${selectedFilter.label}');
+        // You can add more logic here based on the selected filter
+      },
+    );
+  }
 }
-}
-
-

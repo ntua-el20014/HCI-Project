@@ -5,11 +5,11 @@ import 'package:anamnesis/presentation/create_memory_screen/models/record_cubit.
 import 'package:anamnesis/presentation/create_memory_screen/models/record_stat.dart'
     as mem;
 import 'package:anamnesis/presentation/create_memory_screen/widgets/create_memory_button.dart';
+import 'package:anamnesis/presentation/create_memory_screen/widgets/tag_carousel_2_model.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:anamnesis/presentation/home_list_screen/models/tag_carousel_model.dart';
 import 'bloc/create_memory_bloc.dart';
 import 'models/create_memory_model.dart';
 import 'package:flutter/material.dart';
@@ -416,7 +416,7 @@ class _CreateMemoryScreenState extends State<CreateMemoryScreen> {
 
   /// Section Widget
   Widget _buildTagCarousel(BuildContext context, List<LabelItemModel> tags) {
-    return TagCarousel(
+    return TagCarousel2(
       // Create a list to store the selected tags
       labels: tags,
       selectedLabels: selectedTags, // Pass the selected tags to TagCarousel

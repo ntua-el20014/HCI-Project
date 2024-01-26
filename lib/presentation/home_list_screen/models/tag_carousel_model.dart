@@ -37,6 +37,7 @@ class _TagCarouselState extends State<TagCarousel> {
     super.initState();
     homeListBloc = BlocProvider.of<HomeListBloc>(context);
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -70,8 +71,7 @@ class _TagCarouselState extends State<TagCarousel> {
                 if (model.label == 'People') {
                   showModalBottomSheet(
                     context: context,
-                    builder: (context) =>
-                        PeoplePickerBottomsheet(
+                    builder: (context) => PeoplePickerBottomsheet(
                             homeListBloc: homeListBlocInstance)
                         .builder(context),
                   );
@@ -80,8 +80,7 @@ class _TagCarouselState extends State<TagCarousel> {
                 } else if (model.label == 'Duration') {
                   showModalBottomSheet(
                     context: context,
-                    builder: (context) =>
-                        DurationPickerBottomsheet(
+                    builder: (context) => DurationPickerBottomsheet(
                             homeListBloc: homeListBlocInstance)
                         .builder(context),
                   );
@@ -107,6 +106,7 @@ class _TagCarouselState extends State<TagCarousel> {
       ),
     );
   }
+
   void _selectDateRange(BuildContext context) async {
     DateTimeRange? selectedRange = await showDateRangePicker(
       context: context,
